@@ -42,18 +42,22 @@ If you wanna learn more: https://cran.r-project.org/web/packages/ymlthis/vignett
 
 We'll take a few minutes to explore formatting with RMarkdown. You can do quite a few things natively with RMarkdown. Things like _italics_, **bold face**, superscripts x^2^, subscripts H~2~O, and ~~strike through~~. 
 
-You can also do footnotes, insert images, and hyperlinks. 
+You also can easily include LaTeX formulas $sin(x)^2 + cos(x)^2 = 1$ 
 
-Things you can't do: underline.
+You can also do footnotes^[like this], insert images, and hyperlinks. 
+
+Things you can't do: underline your text. 
 
 Things you technically can, but it is so painful you shouldn't: tables
 
-For things like images, tables, and plots. We will rely on R to do the heavy lifting. 
+For things like images, tables, and plots. We will rely on R to do the heavy lifting with greater control over the output.
+
+For things like glosses and trees we will use a LaTexT environment.
 
   
 ### The code
 
-There are two ways to include code in your document. One is _inline_ code; the other one is code chunks. Inline code will appear within a sentence. It is convenient way to intersperse your data with your prose. 
+There are two ways to include code in your document. One is _inline_ code; the other one is code _chunks._ Inline code appears within a sentence. It is convenient way to intersperse your dynamic data with your prose. 
 
 For instance, you might be describing you data and say: there are so many observations in the dataset. In the past, you'd have to know the number and type it out. If there were changes to the data, like more people answer your survey, you would have to manually update your code. The better option is to ask R to check the value every time you need it. That way if there are changes in the data, those changes will be reflected in your prose. 
 
@@ -130,25 +134,32 @@ beds %>% select(shell, stove, hardboil, softboil) %>%
 
 ### Images 
 
-You probably noticed that we could insert an image using markdown syntax. You also probably notice that it is just a hunk of an image and very little control over how it displays. I prefer to use 
+You probably noticed that we could insert an image using markdown syntax. It is likely also noticed that the result is just a hunk of an image and you had very little control over how it displays. I prefer to use `include_graphics()` from the `knitr` package.
 
 ```{r, out.width="3in", fig.align='right'}
 include_graphics(path = "images/rmarkdown_document.png")
 ```
 
-### Plot from the data
+### Plots from the data
 
-Let me retrace your workflow until today:
+Let me retrace the workflow you likely use:
 
 1. you keep your data in Excel
-1. you subset by hand the part of the data you need to create your plot and you moved it to a different sheet in your Excel workbook. Because you are so organized you probably named it "section2-plot2" 
-1. you created the plot you need
+1. you subset by hand the part of the data you need to create your plot and you moved it to a different sheet in your Excel workbook. Because you are so organized you probably named it something like"section2-plot2" 
+1. you created the plot you needed
 1. you exported the plot to a png or jpeg format and named it accordingly
 1. you went to Word and imported the plot, placed it manually where you wanted it and tweaked until it looks just so
 1. you lived happily ever after 
 1. until reviewer #2 pointed out some problem that necessitated you remove some data points and now  you have to repeat all the steps again. 
+1. ugh 
 
 ```{r}
-
+beds %>% 
+  select(hardboil, softboil, shell, stove) %>% 
+  pivot_longer(cols = c("hardboil", "softboil"), 
+               values_to = "cooking_time", 
+               names_to = "cooking_method") %>% 
+  ggplot(aes(y = cooking_time, fill = cooking_method)) +
+  geom_boxplot()
 ```
 
