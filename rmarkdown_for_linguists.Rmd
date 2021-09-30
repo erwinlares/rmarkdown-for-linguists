@@ -4,8 +4,17 @@ author: "Erwin Lares"
 date: "9/29/2021"
 output:
   bookdown::pdf_document2: default
-bibliography: minimal.bib
-csl: language.csl
+header-includes:
+- \usepackage{graphicx} %images
+- \usepackage{float} %captions
+- \usepackage{longtable} %table across pages
+- \usepackage{gb4e} \noautomath %glosses
+- \usepackage{ragged2e} %text 
+- \usepackage{setspace}\doublespacing 
+- \usepackage{indentfirst} 
+- \usepackage[utf8]{inputenc}
+- \usepackage{tikz-qtree}
+- \usepackage[linguistics]{forest}
 ---
 
 ```{r setup, include=FALSE}
@@ -17,6 +26,7 @@ knitr::opts_chunk$set(echo = FALSE,
                       warning = FALSE)
 
 ```
+\FlushLeft
 
 # What is RMarkdown?
 
@@ -95,7 +105,7 @@ beds <- read_csv(url("https://go.wisc.edu/r7c12n"))
 
 ## Become familiar with the data
 
-There are tons of ways to explore data in R. Not the point of the workshop today, but a motivation for one way to present data: tables. 
+There are tons of ways to explore data in R. Not the point of the workshop today, but more as a  motivation for one way we commonly use to present data: tables. 
 
 ```{r, eval=FALSE}
 glimpse(beds)
@@ -142,7 +152,7 @@ include_graphics(path = "images/rmarkdown_document.png")
 
 ### Plots from the data
 
-Let me retrace the workflow you likely use:
+Let me guess the workflow you likely use:
 
 1. you keep your data in Excel
 1. you subset by hand the part of the data you need to create your plot and you moved it to a different sheet in your Excel workbook. Because you are so organized you probably named it something like"section2-plot2" 
@@ -153,7 +163,7 @@ Let me retrace the workflow you likely use:
 1. until reviewer #2 pointed out some problem that necessitated you remove some data points and now  you have to repeat all the steps again. 
 1. ugh 
 
-```{r, fancy-plot, fig.cap="Fancy plot"}
+```{r, fancy-plot, fig.cap="Fancy plot", out.width="3in", fig.align='center'}
 beds %>% 
   select(hardboil, softboil, shell, stove) %>% 
   pivot_longer(cols = c("hardboil", "softboil"), 
@@ -165,11 +175,10 @@ beds %>%
 
 ## Cross referencing artifacts throughout your document. 
 
-To cross reference you figures, plots, and tables you need to meet these criteria:
+To cross reference your figures, plots, and tables, you need to meet these criteria:
 
 a. a special kind of output from the `bookdown` package needs to be specified in the YAML header:
     `bookdown::pdf_document2: default`
-
 a. the chunks containing the code needs to be labeled. The label cannot contain underscores!
 a. tables need to include a `caption = "caption"` argument in the `kable()` call.
 a. plots and figures need to include a `fig.cap = "caption"` in the chunk option
@@ -184,20 +193,110 @@ So far we have manage to create tables directly from the data that has been load
 
 This is one of my favorites things about using RMarkdown. Imagine that you have to submit the same manuscript to various journals. Each journal with its own citation style ...
 
-If you do your document with RMarkdown, you can leave everything the same and just change the .csl file in your YAML that manages how the citations are managed. There is a huge repo of .csl files maintained by Zotero at https://www.zotero.org/styles. 
+If you do your document with RMarkdown, you can leave everything the same and just change the .csl file in your YAML that manages how the citations are rendered! It's seriously magic. 
 
-For this workshop we will work with a .csl I customized. We will also need a .bib file containing the actual bibliographical information we need. We specify those two pieces of information in the YAML header like so
+There is a huge repo of .csl files maintained by Zotero at https://www.zotero.org/styles. 
+
+For this workshop we will work with a .csl I customized. We will also need a .bib file containing the actual bibliographical information we need. We specify those two pieces of information in the YAML header like so:
 
   - `bibliography: minimal.bib`
   - `csl: language.csl`
 
-With done we can include citation in the prose with the syntax `@unique_identifier`. 
+Once that is done, we can include citations in the prose with the syntax `@unique_identifier`. 
 
-For instance, `@Abramson1973` becomes @Abramson1973 indicates that VOT of Spanish /ptk/ and English /ptk/ do not overlap.
+For instance, adding `@Abramson1973` becomes 
+
+>@Abramson1973 finds that VOT of Spanish /ptk/ and English /ptk/ do not overlap.
 
 We have other options for formatting references:
 
-  - Author inside parathenses, [@Hualde2015]
-  - Just the year, [-@Jackendoff1972]
-  - Include a page number, [@Pierrehumbert1980, :15]
+  - Author inside parentheses, `[@Hualde2015]` -> [@Hualde2015]
+  - Just the year, `[@Hualde2015]` -> [-@Jackendoff1972]
+  - Include a page number, `[@Pierrehumbert1980, :15]` -> [@Pierrehumbert1980, :15]
+
+`Kniter` will automatically create the bibliography at the end of your document. It may be a good idea to name it something like `# References{-}`.
+
+# Adding LaTeX flair to your document
+
+Something you probably have noticed is that your RMarkdown document limits a bit the way your manuscript is rendered. I have no control over double or single line, indentations. To address those details, we are going to bring some LaTeX sorcery by including the following code in the YAML header.
+
+`header-includes:`  
+`- \usepackage{graphicx} %images`  
+`- \usepackage{float} %captions`  
+`- \usepackage{longtable} %table across pages`  
+`- \usepackage{gb4e} \noautomath %glosses`  
+`- \usepackage{ragged2e} %text `  
+`- \usepackage{setspace}\doublespacing `  
+`- \usepackage{indentfirst} `  
+`- \usepackage[utf8]{inputenc}`  
+
+## Glosses 
+
+You know glossing is a pain. How much time have you spent aligning each word with its corresponding gloss? 
+
+To gloss, we rely on the LaTeX package `gb4e`. We will write LaTeX code inside a code chunk. Notice the elements of a single sentence gloss. 
+
+`\begin{exe}` <- starts the example environment  
+`	\ex\label`{unique-label} <- if you want to cross reference   
+	The sentence goes here 
+`\end{exe}` <- closes the environment  
+
+---
+
+```{=tex}
+\begin{exe} % sets up the top-level example environment
+	\ex\label{unique-label}
+  This is a sentence
+\end{exe}
+```
+
+RMarkdown lets you reference sentences created within a `exe` environment **if** they have a label. The syntax is simular to what we did for tables and plots, but not quite the same: `\ref{unique-label}`. 
+
+For example, as seen in (\ref{unique-label}), RMarkdown will take care of your example numbering and it will be dynamic. Meaning that if you need to insert a new example before this one, it will get renumbered.
+
+If you have examples that require glosses or multiple instances of one example, you'll need to create a subenvironment with `{xlist}` like so:
+
+`\begin{xlist}` % subenvironment (1.a)  
+`		\ex\label{yet-another-label-a}`  
+`		\gll`  target sentence `\\`  
+          glossed sentence `\\`  
+`		\trans` free translation  
+`\end{xlist}`  
+
+---
+
+```{=tex}
+\begin{exe} % sets up the top-level example environment (1) 
+	\ex\label{another-label}
+	\begin{xlist} % subenvironment (2.a)
+		\ex\label{another-label-a}
+		\gll sacar la pata del barro \\
+		{take out} the leg {from the} mud \\
+		\trans lit: 'take out the leg from the mud. idm: help somebody 
+		\ex\label{another-label-b} % subenvironment (2.a)
+		\gll sacar las castañas del fuego \\
+		{take out} the chestnuts {from the} fire\\
+		\trans lit: pull the chestnust from the fire. idm: help somebody
+	\end{xlist} % end first embedding
+\end{exe}
+```
+
+This gives us more granular control of the example sentences. For instance, (\ref{another-label-a}) is an idiom commonly used in Venezuela.  
+
+## Trees
+
+The last thing we will practice making syntactic trees. Tree drawing also requires a LaTeX environment and you basically write your tree in bracket notation. Like the three below in \ref{tree-01}.
+
+```{=tex}
+\begin{exe}
+\ex\label{tree-01}
+  \hfil
+  \begin{forest}
+    [Aspectual Classes 
+    [Statives \\ States][Dynamic 
+                        [Atelic \\ Activities][Telic 
+                                              [Instantaneous \\ Achievements][Durative \\ Accomplishments]]]]
+  \end{forest}
+\end{exe}
+```
 
