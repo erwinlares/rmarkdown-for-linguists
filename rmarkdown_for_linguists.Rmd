@@ -6,12 +6,12 @@ output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+#knitr::opts_chunk$set(echo = FALSE)
 
 
-# knitr::opts_chunk$set(echo = FALSE,
-#                       message = FALSE,
-#                       warning = FALSE)
+knitr::opts_chunk$set(echo = FALSE,
+                      message = FALSE,
+                      warning = FALSE)
 
 ```
 
@@ -28,9 +28,11 @@ There are three distinct parts of your document
 1. the code
     a. inline code
     a.  fenced code or code _chunks_
-    
+
+
 ![rmarkdown.document](images/rmarkdown_document.png)
-### YAML header 
+
+### The YAML header
 
 It contains meta data for our document. Things like author, title, type of document output, date the document was created, date it was last updated, bib file, and csl file, and a lot more.
 
@@ -40,42 +42,113 @@ If you wanna learn more: https://cran.r-project.org/web/packages/ymlthis/vignett
 
 We'll take a few minutes to explore formatting with RMarkdown. You can do quite a few things natively with RMarkdown. Things like _italics_, **bold face**, superscripts x^2^, subscripts H~2~O, and ~~strike through~~. 
 
-You can also do footnotes, insert pics, and hyperlinks. 
+You can also do footnotes, insert images, and hyperlinks. 
 
 Things you can't do: underline.
 
 Things you technically can, but it is so painful you shouldn't: tables
+
+For things like images, tables, and plots. We will rely on R to do the heavy lifting. 
+
   
 ### The code
 
-There are two ways to include code in your document. One is _inline_ code. Inline code will appear within a sentence. It is convenient way to intersperse your data with your prose. For instance, you might be describing you data and say: there are so many observations in the dataset. In the past, you'd have to know the number and type it out. If there were changes to the data, like more people answer your survey, you would have to manually update your code. The better option is to ask R to check the value everytime you need it. That way if there are changes in the data, those changes will be reflected in your prose. 
+There are two ways to include code in your document. One is _inline_ code; the other one is code chunks. Inline code will appear within a sentence. It is convenient way to intersperse your data with your prose. 
+
+For instance, you might be describing you data and say: there are so many observations in the dataset. In the past, you'd have to know the number and type it out. If there were changes to the data, like more people answer your survey, you would have to manually update your code. The better option is to ask R to check the value every time you need it. That way if there are changes in the data, those changes will be reflected in your prose. 
 
 You add inline code in-between back ticks, like so: `x <- a + b`. This will create verbatim code. Meaning it would look like code but it won't be code. To make it actual code, you need to tell RMarkdown what kind of computer language is that code, so something like `r x <- 1 + 1`. This will evaluate the expression of the right and assign it to a variable on the left, so that now the within the scope of the document, `x` will be equal to `r x`. This is huge for reproducibility!
 
-The code chunk function similarly. They just take three back ticks and they can contain as many lines of code as you want. You still need to tell the language of the code lines (what does that tell you?). The code chunk below loads the libraries we will use throughout the document.
+A code chunk functions similarly. They just take three back ticks and they can contain as many lines of code as you want. You still need to tell the language of the code lines (what does that tell you?). The code chunk below loads the libraries we will use throughout the document.
 
 ```{r}
 library(tidyverse)
 library(rmarkdown)
+library(bookdown)
 library(knitr)
+library(kableExtra)
+
+#knit and check the pdf. Do we like this?
+
+#back to the yaml and add
+#    `output: bookdown::pdf_document2: default`
 
 ```
 
 ### Code chunk options
 
+
 See for more https://yihui.org/knitr/options/
 
-```{r}
-
-```
+# Leveraging R into our document.
 
 ## Read the data in
 
+We will use a toy data set that I created. I wasn't sure if I what kind of data I was going to use. I didn't want to play favorites, so today we will work with data related to boiling eggs to perfection.
+
 ```{r}
+beds <- read_csv(url("https://go.wisc.edu/r7c12n"))
+```
 
-data <- read_csv(url("https://docs.google.com/spreadsheets/d/11Uy21vKsSPDz66tvTMzJnKO8KcksqKcLxX2A1leN-Ds/edit?usp=sharing"))
+## Become familiar with the data
+
+There are tons of ways to explore data in R. Not the point of the workshop today, but a motivation for one way to present data: tables. 
+
+```{r, eval=FALSE}
+glimpse(beds)
+```
+
+### Tables
+
+I'm sure you recognize this scenario: you have you data stored somewhere, and you need to display part of your data in a table as part of your analysis. You probably only need part of the data, perhaps you need some summary statistics, and you definitely don't need 16 decimal places. 
+
+```{r}
+beds %>% select(shell, stove, hardboil, softboil) %>% 
+    group_by(shell, stove) %>% 
+    summarize(mean_hb = mean(hardboil), 
+              mean_sb = mean(softboil)) %>% 
+  kable(format = "latex",
+        booktabs = TRUE,
+        caption = "Age distribution", 
+        digits = 2) %>% 
+  kable_styling(latex_options = c("striped",
+                                  font_size = 10,
+                                  "H"
+                                  )) 
 
 
+# "latex",
+# booktabs = TRUE,
+# col.names = NULL, 
+# caption = 
+
+#########
+# kable_styling latex_options 
+# "scale_down"
+# hold_position, HOLD_position
+```
+
+### Images 
+
+You probably noticed that we could insert an image using markdown syntax. You also probably notice that it is just a hunk of an image and very little control over how it displays. I prefer to use 
+
+```{r, out.width="3in", fig.align='right'}
+include_graphics(path = "images/rmarkdown_document.png")
+```
+
+### Plot from the data
+
+Let me retrace your workflow until today:
+
+1. you keep your data in Excel
+1. you subset by hand the part of the data you need to create your plot and you moved it to a different sheet in your Excel workbook. Because you are so organized you probably named it "section2-plot2" 
+1. you created the plot you need
+1. you exported the plot to a png or jpeg format and named it accordingly
+1. you went to Word and imported the plot, placed it manually where you wanted it and tweaked until it looks just so
+1. you lived happily ever after 
+1. until reviewer #2 pointed out some problem that necessitated you remove some data points and now  you have to repeat all the steps again. 
+
+```{r}
 
 ```
 
