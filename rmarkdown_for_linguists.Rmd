@@ -2,7 +2,10 @@
 title: "rmarkdown_for_linguists"
 author: "Erwin Lares"
 date: "9/29/2021"
-output: pdf_document
+output:
+  bookdown::pdf_document2: default
+bibliography: minimal.bib
+csl: language.csl
 ---
 
 ```{r setup, include=FALSE}
@@ -30,8 +33,6 @@ There are three distinct parts of your document
     a.  fenced code or code _chunks_
 
 
-![rmarkdown.document](images/rmarkdown_document.png)
-
 ### The YAML header
 
 It contains meta data for our document. Things like author, title, type of document output, date the document was created, date it was last updated, bib file, and csl file, and a lot more.
@@ -44,7 +45,9 @@ We'll take a few minutes to explore formatting with RMarkdown. You can do quite 
 
 You also can easily include LaTeX formulas $sin(x)^2 + cos(x)^2 = 1$ 
 
-You can also do footnotes^[like this], insert images, and hyperlinks. 
+You can also do footnotes^[like this], insert images, and [hyperlinks](www.wikipedia.org). 
+
+![rmarkdown.document](images/rmarkdown_document.png)
 
 Things you can't do: underline your text. 
 
@@ -61,7 +64,7 @@ There are two ways to include code in your document. One is _inline_ code; the o
 
 For instance, you might be describing you data and say: there are so many observations in the dataset. In the past, you'd have to know the number and type it out. If there were changes to the data, like more people answer your survey, you would have to manually update your code. The better option is to ask R to check the value every time you need it. That way if there are changes in the data, those changes will be reflected in your prose. 
 
-You add inline code in-between back ticks, like so: `x <- a + b`. This will create verbatim code. Meaning it would look like code but it won't be code. To make it actual code, you need to tell RMarkdown what kind of computer language is that code, so something like `r x <- 1 + 1`. This will evaluate the expression of the right and assign it to a variable on the left, so that now the within the scope of the document, `x` will be equal to `r x`. This is huge for reproducibility!
+You add inline code in-between back ticks, like so: `x <- a + b`. This will create verbatim code. Meaning it would look like code but it won't be actual executable code. To make it actual code, you need to tell RMarkdown what kind of computer language is that code, so something like `r x <- 1 + 1`. This will evaluate the expression of the right and assign it to a variable on the left, so that now the within the scope of the document, `x` will be equal to `r x`. This is huge for reproducibility!
 
 A code chunk functions similarly. They just take three back ticks and they can contain as many lines of code as you want. You still need to tell the language of the code lines (what does that tell you?). The code chunk below loads the libraries we will use throughout the document.
 
@@ -74,15 +77,11 @@ library(kableExtra)
 
 #knit and check the pdf. Do we like this?
 
-#back to the yaml and add
-#    `output: bookdown::pdf_document2: default`
-
 ```
 
 ### Code chunk options
 
-
-See for more https://yihui.org/knitr/options/
+You can set different settings for your code chunk. Check an exhaustive list of chunk option by visiting [https://yihui.org/knitr/options](https://yihui.org/knitr/options/)
 
 # Leveraging R into our document.
 
@@ -106,15 +105,16 @@ glimpse(beds)
 
 I'm sure you recognize this scenario: you have you data stored somewhere, and you need to display part of your data in a table as part of your analysis. You probably only need part of the data, perhaps you need some summary statistics, and you definitely don't need 16 decimal places. 
 
-```{r}
+```{r, fancy-table}
 beds %>% select(shell, stove, hardboil, softboil) %>% 
     group_by(shell, stove) %>% 
     summarize(mean_hb = mean(hardboil), 
               mean_sb = mean(softboil)) %>% 
+#kable()  
   kable(format = "latex",
         booktabs = TRUE,
-        caption = "Age distribution", 
-        digits = 2) %>% 
+        digits = 2, 
+        caption = "Fancy Table") %>% 
   kable_styling(latex_options = c("striped",
                                   font_size = 10,
                                   "H"
@@ -134,9 +134,9 @@ beds %>% select(shell, stove, hardboil, softboil) %>%
 
 ### Images 
 
-You probably noticed that we could insert an image using markdown syntax. It is likely also noticed that the result is just a hunk of an image and you had very little control over how it displays. I prefer to use `include_graphics()` from the `knitr` package.
+You probably noticed that I inserted an image using `Markdown` syntax. It is likely also noticed that the result is just a hunk of an image and you had very little control over how it displays. I prefer to use `include_graphics()` from the `knitr` package.
 
-```{r, out.width="3in", fig.align='right'}
+```{r, fancy-image, out.width="3in", fig.align='right', fig.cap="Fancy Image"}
 include_graphics(path = "images/rmarkdown_document.png")
 ```
 
@@ -153,7 +153,7 @@ Let me retrace the workflow you likely use:
 1. until reviewer #2 pointed out some problem that necessitated you remove some data points and now  you have to repeat all the steps again. 
 1. ugh 
 
-```{r}
+```{r, fancy-plot, fig.cap="Fancy plot"}
 beds %>% 
   select(hardboil, softboil, shell, stove) %>% 
   pivot_longer(cols = c("hardboil", "softboil"), 
@@ -162,4 +162,42 @@ beds %>%
   ggplot(aes(y = cooking_time, fill = cooking_method)) +
   geom_boxplot()
 ```
+
+## Cross referencing artifacts throughout your document. 
+
+To cross reference you figures, plots, and tables you need to meet these criteria:
+
+a. a special kind of output from the `bookdown` package needs to be specified in the YAML header:
+    `bookdown::pdf_document2: default`
+
+a. the chunks containing the code needs to be labeled. The label cannot contain underscores!
+a. tables need to include a `caption = "caption"` argument in the `kable()` call.
+a. plots and figures need to include a `fig.cap = "caption"` in the chunk option
+a. to reference the articifacts, use the following syntax
+    - for tables: `\@ref(tab:caption)`
+    - for plots and figures: `\@ref(fig:caption)`
+    
+So far we have manage to create tables directly from the data that has been loaded into R, see Table \@ref(tab:fancy-table). Images can also be included into R with the function `include_graphics()`, see Figure \@ref(fig:fancy-image). Lastly, we learn to include plots generated directly from the loaded data as seen in Figure \@ref(fig:fancy-plot).
+    
+
+## Citations
+
+This is one of my favorites things about using RMarkdown. Imagine that you have to submit the same manuscript to various journals. Each journal with its own citation style ...
+
+If you do your document with RMarkdown, you can leave everything the same and just change the .csl file in your YAML that manages how the citations are managed. There is a huge repo of .csl files maintained by Zotero at https://www.zotero.org/styles. 
+
+For this workshop we will work with a .csl I customized. We will also need a .bib file containing the actual bibliographical information we need. We specify those two pieces of information in the YAML header like so
+
+  - `bibliography: minimal.bib`
+  - `csl: language.csl`
+
+With done we can include citation in the prose with the syntax `@unique_identifier`. 
+
+For instance, `@Abramson1973` becomes @Abramson1973 indicates that VOT of Spanish /ptk/ and English /ptk/ do not overlap.
+
+We have other options for formatting references:
+
+  - Author inside parathenses, [@Hualde2015]
+  - Just the year, [-@Jackendoff1972]
+  - Include a page number, [@Pierrehumbert1980, :15]
 
