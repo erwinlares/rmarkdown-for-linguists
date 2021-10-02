@@ -1,7 +1,7 @@
 ---
-title: "rmarkdown_for_linguists"
+title: "RMarkdown for Linguists"
 author: "Erwin Lares"
-date: "9/29/2021"
+date: "Created: 9/29/2021. Last Updated: `r format(Sys.time(), '%d %B %Y')`"
 output:
   bookdown::pdf_document2: default
 header-includes:
@@ -27,10 +27,14 @@ knitr::opts_chunk$set(echo = FALSE,
 
 ```
 \FlushLeft
+\newpage
+\setlength\parindent{24pt}
 
-# What is RMarkdown?
+# What is all this about?
 
-RMarkdown is the RStudio implementation of Markdown. Markdown down is a lightweight markup language for creating formatted text using a plain-text editor. An RMarkdown document contains text and code together. You can use RMarkdown to minimally format your text into the prose of your manuscript. The code will become tables, plots, trees and other artifacts that you'll want in your document. 
+My lofty goal is to show you how to use a tool that will increase the transparency, reproducibility and efficiency of your research. To do this we are going to attempt some _live coding_. You have a partial copy of the document and as the presentation progresses, we will together fill in the blanks, complete and run the code, and get an opportunity to practice the strategies and ideas I'll present. 
+
+R is a very popular scripting language with a strong statistical foundation. RStudio is a popular IDE for R. RMarkdown is the RStudio implementation of Markdown. Markdown down is a lightweight markup language for creating formatted text using a plain-text editor. An RMarkdown document contains text and code together. You can use RMarkdown to minimally format the prose of your manuscript. The code will become tables, plots, trees and other artifacts that you'll want in your document. 
 
 ## Anatomy of an RMarkdown document
 
@@ -43,13 +47,13 @@ There are three distinct parts of your document
     a.  fenced code or code _chunks_
 
 
-### The YAML header
+## The YAML header
 
 It contains meta data for our document. Things like author, title, type of document output, date the document was created, date it was last updated, bib file, and csl file, and a lot more.
 
 If you wanna learn more: https://cran.r-project.org/web/packages/ymlthis/vignettes/yaml-overview.html
 
-### The prose
+## The prose
 
 We'll take a few minutes to explore formatting with RMarkdown. You can do quite a few things natively with RMarkdown. Things like _italics_, **bold face**, superscripts x^2^, subscripts H~2~O, and ~~strike through~~. 
 
@@ -63,18 +67,17 @@ Things you can't do: underline your text.
 
 Things you technically can, but it is so painful you shouldn't: tables
 
-For things like images, tables, and plots. We will rely on R to do the heavy lifting with greater control over the output.
+For things like images, tables, and plots. We will rely on R to do the heavy lifting because it offers greater control over the output and makes reproducibility a breeze. 
 
-For things like glosses and trees we will use a LaTexT environment.
+For things like glosses and trees we will use a LaTexT environment inside a code chunk.
 
   
-### The code
+## The code
 
 There are two ways to include code in your document. One is _inline_ code; the other one is code _chunks._ Inline code appears within a sentence. It is convenient way to intersperse your dynamic data with your prose. 
+For instance, you might be describing you data and say: there are so many observations in the dataset. In the past, you'd have to know the number and type it out. If there were changes to the data, like more people answer your survey, you would have to manually update your code. The better option is to ask R to check the value every time you need it. That way if there are changes in the data, those changes will be automatically reflected in your prose. 
 
-For instance, you might be describing you data and say: there are so many observations in the dataset. In the past, you'd have to know the number and type it out. If there were changes to the data, like more people answer your survey, you would have to manually update your code. The better option is to ask R to check the value every time you need it. That way if there are changes in the data, those changes will be reflected in your prose. 
-
-You add inline code in-between back ticks, like so: `x <- a + b`. This will create verbatim code. Meaning it would look like code but it won't be actual executable code. To make it actual code, you need to tell RMarkdown what kind of computer language is that code, so something like `r x <- 1 + 1`. This will evaluate the expression of the right and assign it to a variable on the left, so that now the within the scope of the document, `x` will be equal to `r x`. This is huge for reproducibility!
+You add inline code in-between back ticks, like so: `x <- a + b`. This will create verbatim code. Meaning it would look like code but it won't be actual executable code. To make it actual code, you need to tell RMarkdown what kind of computer language is that code, so something like `r x <- 1 + 1` ` r x <- 1 + 1`. This will evaluate the expression of the right and assign it to a variable on the left, so that now the within the scope of the document, `x` will be equal to `r x`. This is huge for reproducibility!
 
 A code chunk functions similarly. They just take three back ticks and they can contain as many lines of code as you want. You still need to tell the language of the code lines (what does that tell you?). The code chunk below loads the libraries we will use throughout the document.
 
@@ -89,9 +92,19 @@ library(kableExtra)
 
 ```
 
-### Code chunk options
+## Code chunk options
 
 You can set different settings for your code chunk. Check an exhaustive list of chunk option by visiting [https://yihui.org/knitr/options](https://yihui.org/knitr/options/)
+
+## What is happening under the hood
+
+R Markdown generates a new file that contains selected text, code, and results from the .Rmd file. The new file can be a finished _web page_, _PDF_, _MS Word_ document, _slide show_, _notebook_, _handout_, _book_, _dashboard_, _package vignette_ or even a _website_.
+
+```{r, out.width="6in"}
+include_graphics("images/how_it_works.png")
+```
+
+When you press `Knit`, R Markdown feeds the `.Rmd` file to `knitr`, which executes all of the code chunks and creates a new markdown (`.md`) document which includes the code and its output.The markdown file generated by `knitr` is then processed by `pandoc` which is responsible for creating the finished format. This may sound complicated, but `RMarkdown` makes it extremely simple by encapsulating all of the above processing into a single render function.
 
 # Leveraging R into our document.
 
@@ -114,6 +127,8 @@ glimpse(beds)
 ### Tables
 
 I'm sure you recognize this scenario: you have you data stored somewhere, and you need to display part of your data in a table as part of your analysis. You probably only need part of the data, perhaps you need some summary statistics, and you definitely don't need 16 decimal places. 
+
+There are quite a few packages that let you make great looking tables out of your data. I prefer `kableExtra` because it seems to produce the most stable pdfs. You can learn more about `kable` and `kableExtra` here: https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html
 
 ```{r, fancy-table}
 beds %>% select(shell, stove, hardboil, softboil) %>% 
@@ -218,7 +233,7 @@ We have other options for formatting references:
 
 # Adding LaTeX flair to your document
 
-Something you probably have noticed is that your RMarkdown document limits a bit the way your manuscript is rendered. I have no control over double or single line, indentations. To address those details, we are going to bring some LaTeX sorcery by including the following code in the YAML header.
+Something you probably have noticed is that your RMarkdown document limits a bit the way your manuscript is rendered. I have no control over double or single line, indentations, but more importantly glosses and syntactic trees. To address those details, we are going to bring some LaTeX sorcery by including the following lines in the YAML header. Careful with the indentation.
 
 `header-includes:`  
 `- \usepackage{graphicx} %images`  
@@ -250,7 +265,7 @@ To gloss, we rely on the LaTeX package `gb4e`. We will write LaTeX code inside a
 \end{exe}
 ```
 
-RMarkdown lets you reference sentences created within a `exe` environment **if** they have a label. The syntax is simular to what we did for tables and plots, but not quite the same: `\ref{unique-label}`. 
+RMarkdown lets you reference sentences created within a `exe` environment **if** they have a label. The syntax is similar to what we did for tables and plots, but not quite the same: `\ref{unique-label}`. 
 
 For example, as seen in (\ref{unique-label}), RMarkdown will take care of your example numbering and it will be dynamic. Meaning that if you need to insert a new example before this one, it will get renumbered.
 
@@ -285,18 +300,96 @@ This gives us more granular control of the example sentences. For instance, (\re
 
 ## Trees
 
-The last thing we will practice making syntactic trees. Tree drawing also requires a LaTeX environment and you basically write your tree in bracket notation. Like the three below in \ref{tree-01}.
+The last thing we will practice is making syntactic trees. Tree drawing also requires a LaTeX environment and you basically write your tree in bracket notation. 
+
+The most basic tree I can think of is something like \@ref(fig:tree-00).  
+
+```{r , tree-00, fig.align='center', out.width="4in", fig.cap="Simple tree"}
+include_graphics("images/simple_tree.png")
+```
+
+Here's a simple trick I use to help me build them as quick as possible.
+
+    []
 
 ```{=tex}
 \begin{exe}
 \ex\label{tree-01}
   \hfil
   \begin{forest}
-    [Aspectual Classes 
-    [Statives \\ States][Dynamic 
-                        [Atelic \\ Activities][Telic 
-                                              [Instantaneous \\ Achievements][Durative \\ Accomplishments]]]]
+    [XP]
   \end{forest}
 \end{exe}
 ```
 
+All the things you can with LaTeX, you can do here since it is a TeX environment! If you want to take a deep dive, check the [Forest package](https://texdoc.org/serve/forest/0)
+
+For instance, showing movement with arrows would require you to label the _from_ and _to_ nodes using the `name` option. Then you'll have to actually draw the arrow using the command `\draw`. OJO! `\commands` need to end with a semicolon. It wont knit otherwise!
+
+    [XP 
+    [Spec, name=spec][X' 
+    [X][YP, name=complement]]]
+    \draw[->, dotted] (complement) to (spec);
+    
+```{=tex}
+\begin{exe}
+\ex\label{tree-02}
+  \hfil
+  \begin{forest}
+    [XP 
+    [Spec, name=spec][X' 
+    [X][YP, name=complement]]]
+    \draw[->, dotted] (complement) to (spec);
+  \end{forest}
+\end{exe}
+```
+
+That arrow looks wonky, but it is what you ask `Forest` to draw. To tweak the exit and entry points of the arrows, we need to use some basic cartography terminology! Check Figure \@ref(fig:compass) below:
+
+
+```{r, compass, fig.align='center', out.width="2in", fig.cap="compass"}
+
+include_graphics("images/compass.png")
+
+```
+
+
+Putting it all together, it would look like this: 
+
+    [XP 
+    [Spec, name=spec][X' 
+    [X][YP, name=complement]]]
+    `\draw[->, dotted] (complement) to[out=south west, in=south] (spec);`
+
+
+```{=tex}
+\begin{exe}
+\ex\label{tree-03}
+  \hfil
+  \begin{forest}
+    [XP 
+    [Spec, name=spec][X' 
+    [X][YP, name=complement]]]
+    \draw[->, dotted] (complement) to[out=south west, in=south] (spec);
+  \end{forest}
+\end{exe}
+```
+
+# A few more tricks
+
+- include this in your YAML for latest version information  
+    - Last Updated: ` r format(Sys.time(), '%d %B %Y')`.  
+- You can use backslash LaTeX command liberally through our your document. For instance, our document would look better if we insert a couple of page breaks.   
+    - `\FlushLeft`
+    - `\newpage`
+    - `\setlength\parindent{24pt}`
+- You can label your sections for cross referencing. You can also keep sections from being numbered in  the the Table of Content, great for References and Appendices.
+- Consider using Git and Github with your R project. It's the second best thing I have learned. 
+- RMarkdown lets you create more than just pdfs: my personal website is done with `blogdown` and my classroom slides I make using `xaringan`. Check erwinlares.com!
+- You can download a copy of the completed document we worked on today here: go.
+- Don't hesitate to reach out if you have questions or want to collaborate with me! lares@wisc.edu!
+- Your headings don't work? Make sure there is a space between the hashtag and the text of your heading
+
+\newpage
+
+# References{-}
