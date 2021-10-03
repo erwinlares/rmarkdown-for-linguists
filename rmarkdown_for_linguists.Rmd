@@ -1,34 +1,14 @@
 ---
 title: "RMarkdown for Linguists  | HLS 2021"
 author: "Erwin Lares"
-date: "Created: 9/29/2021    | Last Updated: `r format(Sys.time(), '%d %B %Y')`"
-output:
-  bookdown::pdf_document2: default
-bibliography: minimal.bib
-csl: language.csl
-header-includes:
-- \usepackage{graphicx} %images
-- \usepackage{float} %captions
-- \usepackage{longtable} %table across pages
-- \usepackage{gb4e} \noautomath %glosses
-- \usepackage{ragged2e} %text 
-- \usepackage{setspace}\doublespacing 
-- \usepackage{indentfirst} 
-- \usepackage[utf8]{inputenc}
-- \usepackage{tikz-qtree}
-- \usepackage[linguistics]{forest}
+date: "Created: 9/29/2021"
+output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE,
-                      include = TRUE, 
-                      message = FALSE, 
-                      warning = FALSE)
+knitr::opts_chunk$set(echo = TRUE)
 
 ```
-\FlushLeft
-\newpage
-\setlength\parindent{24pt}
 
 # What is all this about?
 
@@ -160,8 +140,6 @@ glimpse(beds)
 
 Write a descriptive sentence of the data you just read in that indicates the number of observations and the numbers of variables in the dataset. Hint: the R functions you need are `nrow()` and `colnames()`. (2 minutes)
 
-There are `r nrow(beds)` observations in the dataset. The variables recorded are: `r colnames(beds)`.
-
 ## Tables
 
 I'm sure you recognize this scenario: you have you data stored somewhere, and you need to display part of your data in a table as part of your analysis. You probably only need part of the data, perhaps you need some summary statistics, and you definitely don't need 16 decimal places. 
@@ -199,25 +177,6 @@ beds %>% select(shell, stove, hardboil) %>%
 ### Tables exercise
 
 Supose you want to recreate the equivalent table for the softboiled eggs. Go ahead and create a new code chunk and make the necessary changes to create that table. To create a new code chunk you can use `Code -> Insert Chunk` from the `Menu`. (3 minutes)
-
-
-```{r, fancy-table2}
-
-beds %>% select(shell, stove, softboil) %>% 
-    group_by(shell, stove) %>% 
-    summarize(mean_sb = mean(softboil)) %>% 
-#kable()  
-  kable(format = "latex",
-        booktabs = TRUE,
-        digits = 2, 
-        caption = "Fancy Table 2") %>% 
-  kable_styling(latex_options = c("striped",
-                                  font_size = 10,
-                                  "H"
-                                  )) 
-
-
-```
 
 ## Images 
 
@@ -257,11 +216,6 @@ beds %>%
 
 Suppose you want to create a plot that shows the distribution of responses for the variable `taste_hb` and you want those responses in a barplot. (5 minutes)
 
-```{r, fancy-plot2, fig.cap="Fancy plot 2", out.width="4in", fig.align='center'}
-beds %>% 
-  ggplot(aes(x = taste_hb)) +
-  geom_bar()
-```
 
 ## Cross referencing artifacts throughout your document. 
 
@@ -339,7 +293,7 @@ To gloss, we rely on the LaTeX package `gb4e`. We will write LaTeX code inside a
 
 ---
 
-```{=tex}
+```{r, eval = FALSE}
 \begin{exe}
 	\ex\label{unique-label}
   This is a sentence.
@@ -361,7 +315,7 @@ If you have examples that require glosses or multiple instances of one example, 
 
 ---
 
-```{=tex}
+```{r, eval=FALSE}
 \begin{exe} % sets up the top-level example environment (1) 
 	\ex\label{another-label}
 	\begin{xlist} % subenvironment (2.a)
@@ -397,7 +351,7 @@ Here's a simple trick I use to help me build them as quick as possible.
     [Spec][X' 
           [X][YP]]]
 
-```{=tex}
+```{r, eval = FALSE}
 \begin{exe}
 \ex\label{tree-01}
   \hfil
@@ -416,7 +370,7 @@ For instance, showing movement with arrows would require you to label the _from_
     [X][YP, name=complement]]]
     \draw[->, dotted] (complement) to (spec);
     
-```{=tex}
+```{r, eval = FALSE}
 \begin{exe}
 \ex\label{tree-02}
   \hfil
@@ -447,7 +401,7 @@ Putting it all together, we need to tell the direction we want the arrow to exit
     \draw[->, dotted] (complement) to[out=south west, in=south] (spec);
 
 
-```{=tex}
+```{r, eval=FALSE}
 \begin{exe}
 \ex\label{tree-03}
   \hfil
@@ -475,6 +429,5 @@ Putting it all together, we need to tell the direction we want the arrow to exit
 - Don't hesitate to reach out if you have questions or want to collaborate with me! lares@wisc.edu!
 - Your headings don't work? Make sure there is a space between the hashtag and the text of your heading.
 
-\newpage
 
 # References {-}
