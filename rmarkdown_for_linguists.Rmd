@@ -471,7 +471,7 @@ Putting it all together, we need to tell the direction we want the arrow to exit
 - You can label your sections for cross referencing. You can also keep sections from being numbered in  the the Table of Content, great for References and Appendices by labeling it with a minus sign. Check out section \ref{a-few-more-tricks}.
 - Consider using Git and Github with your R project. It's the second best thing I have learned. 
 - RMarkdown lets you create more than just pdfs: my personal website is done with `blogdown`. I make my  slides`xaringan`. Check [erwinlares.com](erwinlares.com)!
-- You can download a copy of the completed document we worked on today here: go.
+- You can download a copy of the completed document we worked on today here: https://go.wisc.edu/i1yq5p
 - Don't hesitate to reach out if you have questions or want to collaborate with me! lares@wisc.edu!
 - Your headings don't work? Make sure there is a space between the hashtag and the text of your heading.
 
