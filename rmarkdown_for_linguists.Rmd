@@ -1,7 +1,7 @@
 ---
 title: "RMarkdown for Linguists  | HLS 2021"
 author: "Erwin Lares"
-date: "Created: 9/29/2021"
+date: "Created: 29 Sept 2021"
 output: pdf_document
 ---
 
@@ -12,11 +12,15 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # What is all this about?
 
-My lofty goal is to show you how to use a tool that will increase the transparency, reproducibility and efficiency of your research. To do this we are going to attempt some _live coding_. You'll have a partial copy of the document and as the presentation progresses, we will together fill in the blanks, complete activities, and run the code, so we get an opportunity to practice the strategies and ideas I'm presenting. 
+My lofty goal is to show you how to use a tool that will increase the transparency, reproducibility and efficiency of your research. To do this we are going to attempt some _live coding_. I'll start by doing some talking and demoing, then I'll give you time to work on your own document. 
+
+When we are about to start Section 2, I'll share with you a copy of this document you see me working on. As the presentation progresses, we will fill in the blanks together, complete activities, and run the code, so we get an opportunity to practice the strategies and ideas I'm presenting. For now just open RStudio.
 
 R is a very popular scripting language with a strong statistical foundation. RStudio is a popular IDE for R. RMarkdown is the RStudio implementation of Markdown. Markdown down is a lightweight markup language for creating formatted text using a plain-text editor. An RMarkdown document contains text and code together. You can use RMarkdown to minimally format the prose of your manuscript. The code will become tables, plots, trees and other artifacts that you'll want in your document. 
 
 ## Anatomy of an RMarkdown document
+
+![rmarkdown.document](images/rmarkdown_document.png){width=75%}
 
 There are three distinct parts of your document
 
@@ -29,7 +33,7 @@ There are three distinct parts of your document
 
 ## The YAML header
 
-It contains meta data for our document. Things like author, title, type of document output, date the document was created, date it was last updated, bib file, and csl file, and a lot more.
+It is at the very top of the document. The basic syntax of YAML is to use key-value pairs in the format `key: value`. It contains meta data for our document. Things like author, title, type of document output, date the document was created, date it was last updated, bib file, and csl file, and a lot more.
 
 If you wanna learn more: https://cran.r-project.org/web/packages/ymlthis/vignettes/yaml-overview.html
 
@@ -38,9 +42,9 @@ If you wanna learn more: https://cran.r-project.org/web/packages/ymlthis/vignett
 We'll take a few minutes to explore formatting with RMarkdown. You can do quite a few things natively with RMarkdown. Things like _italics_, **bold face**, superscripts x^2^, subscripts H~2~O, and ~~strike through~~. 
 You also can include LaTeX formulas $sin(x)^2 + cos(x)^2 = 1$ 
 
-You can also do footnotes^[like this], insert images, and [hyperlinks](https://www.glossa-journal.org/). 
+You can give your document structure by creating sections with headers. A top-level header starts with a single hashtag, second level with 2 hashtags, all the way to 6 levels deep. 
 
-![rmarkdown.document](images/rmarkdown_document.png)
+You can also do footnotes^[like this], insert images, and [hyperlinks](https://www.glossa-journal.org/). 
 
 Things you can't do: underline your text. 
 
@@ -50,16 +54,23 @@ For things like images, tables, and plots. We will rely on R to do the heavy lif
 
 For things like glosses and trees we will use a LaTeX environment inside a code chunk.
 
-  
 ## The code
 
 There are two ways to include code in your document. One is _inline_ code; the other one is code _chunks._ Inline code appears within a sentence. It is convenient way to include data that is likely to change within your prose. 
 
-For instance, you might be describing you data and say: there are so many observations in the dataset. In the past, you'd have to know the number and type it out. If there were changes to the data, like more people answer your survey, you would have to manually update your code. The better option is to ask R to check the value every time you need it. That way if there are changes in the data, those changes will be automatically reflected in your prose. 
+For instance, you might be describing you data and say ... "there are so many observations in the dataset." In the past, you'd have to know the number and type it out. If there were changes to the data, like more people answered your survey, or observations needed to be discarded, you would have to manually update your number. A better option is to ask R to check the value every time you need it. That way if there are changes in the data, those changes will be automatically reflected in your prose. 
 
-You add inline code in-between back ticks, like so: `x <- a + b`. This will create verbatim code. Meaning it would look like code but it won't be actual executable code. To make it actual code, you need to tell RMarkdown what kind language that code is in, so something like ` r x <- a + b`. This will evaluate the expression of the right and assign it to a variable on the left, so that now the within the scope of the document, anytime there is a change to `a` or `b`, `x` will reflect that change. This is huge for reproducibility!
+You add inline code in-between back ticks, like so: 
 
-A code chunk functions similarly. They just take three back ticks and they can contain as many lines of code as you want. You still need to specify the language the code chunk uses(what does that tell you?). The code chunk below loads the libraries we will use throughout the document.
+Total number of participants =  `native_part + nnative_part`. 
+
+This will create verbatim code. Meaning it would look like code but it won't be actual executable code. To make it actual code, you need to tell RMarkdown what kind language that code is in, so something like:
+
+` r native_part + nnative_part`. 
+
+This will evaluate the expression every time you render your document, so that now the within the scope of the document, anytime there is a change to `native_part` or `nnative_part`, their sum will reflect that change. This is huge for reproducibility!
+
+A code chunk functions similarly. They just take three back ticks and they can contain as many lines of code as you want. You still need to specify the language the code chunk uses inside the curly brackets. The code chunk below loads the libraries we will use throughout the document.
 
 ```{r}
 library(tidyverse)
@@ -72,11 +83,13 @@ library(kableExtra)
 
 ```
 
+Something cool about your code chunks is that you can run them individually before you knit your entire document. That makes debugging easier!
+
 ## Code chunk options
 
-You can set different settings for your code chunks. Check an exhaustive list of chunk options by visiting [https://yihui.org/knitr/options](https://yihui.org/knitr/options/)
+You can set different settings for your code chunks. You can check an exhaustive list of chunk options by visiting [https://yihui.org/knitr/options](https://yihui.org/knitr/options/)
 
-If you know that most of your chunks need to behave the same, you can set global chunk options by running this inside a code chunk. For instance, I usually want the output of my chunks to be part of the document, but I rarely want the actual code to be included in the manuscript. 
+If you know that most of your chunks need to behave the same qay, you can set global chunk options by running this inside a code chunk. For instance, I usually want the output of my chunks to be part of the document, but I rarely want the actual code to be included in the manuscript. 
 
 `knitr::opts_chunk$set(echo = FALSE,`  
                       `include = TRUE,`  
@@ -95,17 +108,20 @@ include_graphics("images/how_it_works.png")
 
 When you press `Knit`, R Markdown feeds the `.Rmd` file to `knitr`, which executes all of the code chunks and creates a new markdown (`.md`) document which includes the code and its output.The markdown file generated by `knitr` is then processed by `pandoc` which is responsible for creating the finished format. This may sound complicated, but `RMarkdown` makes it extremely simple by encapsulating all of the above processing into a single `render` function.
 
+## Questions so far?
+
 # Leveraging R into our document.
 
 ## Lets code along!
-1. Click on File
-1. Create New Project
-1. New Directory
-1. New Project
-1. Give a name, pick a location on your computer and press Create
-1. I just sent you a zip file by email now. You can download it here: go.wisc.edu/
-1. Place that file in the Documents/Rmarkdown_for_linguist folder that you now have.
-1. Go back to RStudio. Check the Files tab, and click on the rmarkdown_for_linguists.Rmd 
+1. Click on `File`
+1. `Create New Project`
+1. `New Directory`
+1. `New Project`
+1. Give a name, pick `Desktop` on your computer hard drive and press `Create`
+1. I just sent you a zip file by email now. You can download it here: go.wisc.edu/vj1xh4.
+1. Extract the files and place them in the Desktop/Rmarkdown_for_linguist folder that you now have. 
+1. Go back to RStudio. Check the Files tab, lets examine what you have.
+1. Click on the rmarkdown_for_linguists.Rmd 
     
 <!-- 5 minutes. Let's press Knit to render the file into a pdf. Please give me a thumbs up in the chat to let me know everything is working and you are ready to go  -->
 
@@ -119,26 +135,27 @@ include_graphics("images/new_project.png")
 
 ## Read the data in
 
-We will use a toy data set that I created. I wasn't sure what kind of data I was going to use. I didn't want to play favorites, so today we will work with data related to boiling eggs to perfection.
+We will use a toy data set that I created. I wasn't sure what kind of data I was going to use. I didn't want to play favorites, so today we will work with data related to cooking eggs to perfection because, which as you know together with ramen noodles, eggs are the meal of choice for grad students.
 
 
 ```{r}
-beds <- read_csv(file="data/beds.csv")
+
+beds <- read_csv(file="data/beds.csv") 
+
 ```
 
 ## Become familiar with the data
 
 There are tons of ways to explore data in R. Not the point of the workshop today, but more as a motivation for one way we commonly use to present data: tables. 
 
-```{r, eval=FALSE}
-
+```{r}
 glimpse(beds)
 
 ```
 
-### Exercise - 
+### Exercise - inline code
 
-Write a descriptive sentence of the data you just read in that indicates the number of observations and the numbers of variables in the dataset. Hint: the R functions you need are `nrow()` and `colnames()`. (2 minutes)
+Write a descriptive sentence of the data you just read in that indicates the number of observations in the dataset. Hint: the R function you need to include in your code is `nrow()`. (2 minutes)
 
 ## Tables
 
@@ -146,7 +163,7 @@ I'm sure you recognize this scenario: you have you data stored somewhere, and yo
 
 There are quite a few packages that let you make great looking tables out of your data. I prefer `kableExtra` because it seems to produce the most stable pdfs. You can learn more about `kable` and `kableExtra` here: https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html
 
-For our analysis we want a table that shows the mean cooking time for hard boiled eggs across the type of shell and the type of stove used.
+For our analysis we want a table that shows the mean cooking time for hard boiled eggs across the types of shell and the types of stove used.
 
 ```{r, fancy-table}
 beds %>% select(shell, stove, hardboil) %>% 
@@ -161,26 +178,16 @@ beds %>% select(shell, stove, hardboil) %>%
                                   font_size = 10,
                                   "H"
                                   )) 
-
-
-# "latex",
-# booktabs = TRUE,
-# col.names = NULL, 
-# caption = 
-
-#########
-# kable_styling latex_options 
-# "scale_down"
-# hold_position, HOLD_position
 ```
 
-### Tables exercise
+### Exercise - tables
 
-Supose you want to recreate the equivalent table for the softboiled eggs. Go ahead and create a new code chunk and make the necessary changes to create that table. To create a new code chunk you can use `Code -> Insert Chunk` from the `Menu`. (3 minutes)
+Suppose you want to recreate the equivalent table **but** for the softboiled eggs variable. Go ahead and create a new code chunk and make the necessary changes to create that table. To create a new code chunk you can use `Code -> Insert Chunk` from the `Menu`. (3 minutes)
+
 
 ## Images 
 
-You probably noticed that I inserted an image earlier using `Markdown` syntax. It is likely also noticed that the result is just a hunk of an image and you had very little control over how it displays. I prefer to use `include_graphics()` from the `knitr` package.
+You probably noticed that I inserted an image earlier using `Markdown` syntax. It is likely you also noticed that the result is just a hunk of an image and you had very little control over how it displays. I prefer to use `include_graphics()` from the `knitr` package. Notice all the chunk options.
 
 ```{r, fancy-image, out.width="3in", fig.align='right', fig.cap="Fancy Image"}
 include_graphics(path = "images/rmarkdown_document.png")
@@ -195,11 +202,6 @@ Let me guess the workflow you likely use:
 1. you created the plot you needed
 1. you exported the plot to a .png or .jpeg format and named it accordingly
 1. you went to Word and imported the plot, placed it manually where you wanted it and tweaked until it looks just so
-1. you lived happily ever after 
-...
-1. until reviewer #2 pointed out some problem that necessitated you remove some data points and now you have to repeat all the steps again. 
-...
-1. Never again!
 
 ```{r, fancy-plot, fig.cap="Fancy plot", out.width="4in", fig.align='center', fig.pos="H"}
 beds %>% 
@@ -212,18 +214,23 @@ beds %>%
   facet_grid(shell~stove)
 ```
 
-### Plots exercise 
+### Exercise - plots 
 
-Suppose you want to create a plot that shows the distribution of responses for the variable `taste_hb` and you want those responses in a barplot. (5 minutes)
+Suppose you want to create a plot that shows the distribution of responses for the variable `taste_hb` and you want those responses in a barplot. Hint: you only need to work with one variable and the geom that you need to use is `geom_bar()`. (5 minutes)
 
+## Changes in the data? 
+
+Suppose you find out one of your grad students was involved in a evil plot with Reviewer #2 to thwart your research by introducing faulty data! Grad student #8 used the wrong equipment to measure cooking times! 
+
+Fortunately all you have to do is discard all the observations done by grad student #8 right after you read your data and re-knit your document!!!
 
 ## Cross referencing artifacts throughout your document. 
 
 To be able to cross reference your figures, plots, and tables, you'll need to meet these criteria:
 
-a. a special kind of output from the `bookdown` package needs to be specified in the YAML header. Careful with the indentation!
-    `bookdown::pdf_document2: default`
-a. the chunks containing the code need to be labeled. The label cannot contain underscores, dashes are okay!
+a. a special kind of output from the `bookdown` package needs to be specified in the YAML header. Careful with the indentation! Don't include the backticks!  
+`bookdown::pdf_document2: default`
+a. the chunks that produuce the output you want to cross reference need to be labeled. The label cannot contain underscores, dashes are okay!
 a. tables need to include a `caption = "caption"` argument in the `kable()` call.
 a. plots and figures need to include a `fig.cap = "caption"` in the chunk option
 a. to reference the artifacts, use the following syntax
@@ -232,27 +239,24 @@ a. to reference the artifacts, use the following syntax
     
 So far we have manage to create tables directly from the data that has been loaded into R, see Table \@ref(tab:fancy-table). Images can also be included into R with the function `include_graphics()`, see Figure \@ref(fig:fancy-image). Lastly, we learn to include plots generated directly from the loaded data as seen in Figure \@ref(fig:fancy-plot).
 
-### Cross-referencing exercise
+### Exercise - cross-referencing
 
-Make changes to your table and plot so you can cross-reference them. (3 minutes)
-
-Plot \@ref(fig:fancy-plot2) shows that the most common answer is 4.  
-Table \@ref(tab:fancy-table2) shows that for brown-shelled eggs, the type of stove made a difference when cooking hardboiled eggs. No difference was observed for softboiled eggs. For white-shelled eggs, the type of stove made no difference between the cooking time for soft or hard boiled eggs.  
+Make changes to table and plot you created in the exercises above so you can cross-reference them in a paragraph. (3 minutes)
 
 ## Citations
 
-This is one of my favorites things about using RMarkdown. Imagine that you have to submit the same manuscript to various journals. Each journal with its own citation style ...
+This is one of my favorites things about using RMarkdown. Imagine that you have to submit the same manuscript to various places. Each of these places is asking you to follow a different citation style ...
 
 If you do your document with RMarkdown, you can leave everything the same and just change the .csl file in your YAML that manages how the citations are rendered! It's serious magic. 
 
 There is a huge repo of .csl files maintained by Zotero at https://www.zotero.org/styles. 
 
-For this workshop we will work with a .csl I customized. We will also need a .bib file containing the actual bibliographical information we need. We specify those two pieces of information in the YAML header like so:
+For this workshop we will work with a .csl I customized. We will also need a .bib file containing the actual bibliographical information we need. This files need to live in the same project file. We specify those two pieces of information in the YAML header like so:
 
   - `bibliography: minimal.bib`
-  - `csl: language.csl`
+  - `csl: lares.csl`
 
-Once that is done, we can include citations in the prose with the syntax `@unique_identifier`. 
+Once that is done, we can include citations anywhere in the prose with the syntax `@unique_identifier`. 
 
 For instance, adding `@Abramson1973` becomes 
 
@@ -268,7 +272,7 @@ We have other options for formatting references:
 
 # Adding LaTeX flair to your document
 
-Something you probably have noticed is that your RMarkdown document limits a bit the way your manuscript is rendered. You have no control over double or single line spacing or indentations. We have no way to include glosses and syntactic trees natively. To address those details, we are going to bring some LaTeX sorcery by including the following lines in the YAML header.
+Something you probably have noticed is that your RMarkdown document limits a bit the way your manuscript is rendered. You have no control over double or single line spacing or indentations. We have no way to include glosses and syntactic trees natively. To address those details, we are going to bring in some LaTeX sorcery by including the following lines in the YAML header. This lines make sure that those LaTeX packages are available within your RMarkdown document. 
 
 `header-includes:`  
 `- \usepackage{graphicx} %images`  
@@ -278,22 +282,23 @@ Something you probably have noticed is that your RMarkdown document limits a bit
 `- \usepackage{ragged2e} %text `  
 `- \usepackage{setspace}\doublespacing `  
 `- \usepackage{indentfirst} `  
-`- \usepackage[utf8]{inputenc}`  
+`- \usepackage[utf8]{inputenc}` 
+`- \usepackage[linguistics]{forest}`
 
-## Glosses 
+Let's re-knit the document. Do you notice something new?
 
-You know glossing is a pain. How much time have you spent aligning each word with its corresponding gloss? 
+## Sentence examples 
 
-To gloss, we rely on the LaTeX package `gb4e`. We will write LaTeX code inside a code chunk. Notice the elements of a single sentence gloss. 
+To create sentence examples, we rely on the LaTeX package `gb4e`. We will write LaTeX code inside a code chunk. Notice the elements of the `{exe}` environment needed to create a sentence example. 
 
 `\begin{exe}` <- starts the example environment  
-`	\ex\label`{unique-label} <- if you want to cross reference later
-	The sentence goes here 
+`	\ex\label`{unique-label} <- if you want to cross reference later  
+	**The sentence goes here**  
 `\end{exe}` <- closes the environment  
 
----
+--- 
 
-```{r, eval = FALSE}
+```{r, eval=FALSE}
 \begin{exe}
 	\ex\label{unique-label}
   This is a sentence.
@@ -304,7 +309,7 @@ RMarkdown lets you reference sentences created within a `exe` environment **if**
 
 For example, as seen in (\ref{unique-label}), RMarkdown will take care of your example numbering and it will be dynamic. Meaning that if you need to insert a new example before this one, it will get renumbered.
 
-If you have examples that require glosses or multiple instances of one example, you'll need to create a subenvironment with `{xlist}` within the parent `{exe}` environment, like so:
+You know glossing is a pain. How much time have you spent aligning each word with its corresponding gloss? If you have examples that require glosses or multiple instances of one example, you'll need to create a subenvironment with `{xlist}` within the parent `{exe}` environment, like so:
 
 `\begin{xlist}` % subenvironment (1.a)  
 `		\ex\label{yet-another-label-a}`  
@@ -316,7 +321,7 @@ If you have examples that require glosses or multiple instances of one example, 
 ---
 
 ```{r, eval=FALSE}
-\begin{exe} % sets up the top-level example environment (1) 
+\begin{exe} % sets up the top-level example environment (2) 
 	\ex\label{another-label}
 	\begin{xlist} % subenvironment (2.a)
 		\ex\label{another-label-a}
@@ -335,11 +340,14 @@ This gives us more granular control of the example sentences. For instance, (\re
 
 ### Glosses exercise
 
-Add your favorite idiom as a third example and cross-reference below indicating why. 
+Make a copy of the chunk above and add your favorite idiom as a third example. Write a sentence cross-referencing the example you wrote indicating why it is your favorite idiom. 
+
+My favorite idiom is (\ref{another-label2-c}) because because it is knows everywhere in the Spanish-speaking world!
+
 
 ## Trees
 
-The last thing we will practice is making syntactic trees. Tree drawing also requires a LaTeX environment and you basically write your tree in bracket notation. The most basic tree I can think of is something like \@ref(fig:tree-00).  
+The last thing we will practice is making syntactic trees. Tree drawing also requires a LaTeX environment. You basically need to write your tree in bracket notation. The most basic tree I can think of is something like \@ref(fig:tree-00).  
 
 ```{r , tree-00, fig.align='center', out.width="1.5in", fig.cap="Simple tree", fig.pos="H"}
 include_graphics("images/simple_tree.png")
@@ -351,17 +359,19 @@ Here's a simple trick I use to help me build them as quick as possible.
     [Spec][X' 
           [X][YP]]]
 
-```{r, eval = FALSE}
+```{r, eval=FALSE}
 \begin{exe}
 \ex\label{tree-01}
   \hfil
   \begin{forest}
-    [XP [Spec][X' [X][YP]]]
+    [XP 
+    [Spec][X' 
+          [X][YP]]]
   \end{forest}
 \end{exe}
 ```
 
-And there us our tree! All the things you can with LaTeX, you can do here since it is a TeX environment! If you want to take a deep dive, check the [Forest package](https://texdoc.org/serve/forest/0)
+And there is our tree! All the things you can do with LaTeX, you can do here since it is a TeX environment! If you want to take a deep dive, check the [Forest package](https://texdoc.org/serve/forest/0)
 
 For instance, showing movement with arrows would require you to label the _from_ and _to_ nodes using the `name` option. Then you'll have to actually draw the arrow using the command `\draw`. OJO! `\commands` need to end with a semicolon. They wont `knit` otherwise!
 
@@ -370,7 +380,7 @@ For instance, showing movement with arrows would require you to label the _from_
     [X][YP, name=complement]]]
     \draw[->, dotted] (complement) to (spec);
     
-```{r, eval = FALSE}
+```{r, eval=FALSE}
 \begin{exe}
 \ex\label{tree-02}
   \hfil
@@ -414,7 +424,12 @@ Putting it all together, we need to tell the direction we want the arrow to exit
 \end{exe}
 ```
 
-# A few more tricks {#a-few-more-tricks}
+### Exercise -drawing trees
+ 
+Draw a simple syntactic tree where you use a solid arrow to represent a Spec-head relationship. (3 minutes)
+
+
+# A few more tricks
 
 - include this in your YAML for latest version information:  
     - Last Updated: ` r format(Sys.time(), '%d %B %Y')`.  
@@ -423,11 +438,11 @@ Putting it all together, we need to tell the direction we want the arrow to exit
     - `\newpage`
     - `\setlength\parindent{24pt}`
 - You can label your sections for cross referencing. You can also keep sections from being numbered in  the the Table of Content, great for References and Appendices by labeling it with a minus sign. Check out section \ref{a-few-more-tricks}.
-- Consider using Git and Github with your R project. It's the second best thing I have learned. 
-- RMarkdown lets you create more than just pdfs: my personal website is done with `blogdown`. I make my  slides`xaringan`. Check [erwinlares.com](erwinlares.com)!
-- You can download a copy of the completed document we worked on today here: https://go.wisc.edu/i1yq5p
-- Don't hesitate to reach out if you have questions or want to collaborate with me! lares@wisc.edu!
+- Consider using Git and Github with your R project. It's the second best thing I have learned. Check https://happygitwithr.com/rstudio-git-github.html.
+- RMarkdown lets you create more than just pdfs: my personal website is done with `blogdown`. I make my  classroom slides `xaringan`. Check [erwinlares.com](erwinlares.com)!
+- If you couldn't finished all the things we did today, you can download a copy of the completed document we worked on today here: https://go.wisc.edu/i1yq5p
+- Don't hesitate to reach out if you have questions or need help! lares@wisc.edu!
 - Your headings don't work? Make sure there is a space between the hashtag and the text of your heading.
+- Did you notice that because the trees we drew have a label, we can cross reference them?
 
-
-# References {-}
+# References
