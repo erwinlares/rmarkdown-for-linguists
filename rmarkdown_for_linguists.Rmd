@@ -1,7 +1,10 @@
 ---
 title: "RMarkdown for Linguists  | HLS 2021"
-author: "Erwin Lares"
+author: "Erwin Lares © 2021 "
+abstract: "This document is licensed under Creative Commons Attribution 2.0 Generic (CC BY 2.0). You are free to (a) Share — copy and redistribute the material in any medium or format. (b) Adapt — remix, transform, and build upon the material for any purpose, even commercially. (c) Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use."
 date: "Created: 29 Sept 2021 | Last Updated: `r format(Sys.time(), '%d %B %Y')`"
+affiliation: "Department of Spanish a& Portuguese @ UW-Madison"
+
 output: 
   bookdown::pdf_document2: default
 bibliography: minimal.bib
@@ -19,12 +22,13 @@ header-includes:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE,
-                      include = TRUE, 
+
+knitr::opts_chunk$set(echo = FALSE, 
+                      include = TRUE,
                       message = FALSE, 
                       warning = FALSE)
-
 ```
+
 
 \FlushLeft
 \newpage
@@ -33,17 +37,17 @@ knitr::opts_chunk$set(echo = FALSE,
 
 # What is all this about?
 
-My lofty goal is to show you how to use a tool that will increase the transparency, reproducibility and efficiency of your research. To do this we are going to attempt some _live coding_. I'll start by doing some talking and demoing, then I'll give you time to work on your own document. 
+My lofty goal is to show you how to use a tool that will increase the transparency, reproducibility and efficiency of your research. To do this we are going to attempt some _live coding_. I'll start by doing some talking and demoing, then I'll give you time to work on your own document. I'll keep both windows open throughout the presentation so you can see how the .Rmd file becomes the .pdf file when we knit it. 
 
-When we are about to start Section 2, I'll share with you a copy of this document you see me working on. As the presentation progresses, we will fill in the blanks together, complete activities, and run the code, so we get an opportunity to practice the strategies and ideas I'm presenting. Don't worry, we'll get errors too!
+When we are about to start Section 2, I'll share with you a copy of this document you see me working on. As the presentation progresses, we will fill in the blanks together, complete activities, and run the code, so you get an opportunity to practice the strategies and ideas I'm presenting. Don't worry, we'll get errors too!
 
-For now just open RStudio and hand tight.
+For now just open RStudio and hang tight.
 
 R is a very popular scripting language with a strong statistical foundation. RStudio is a popular IDE for R. RMarkdown is the RStudio implementation of Markdown. Markdown down is a lightweight markup language for creating formatted text using a plain-text editor. An RMarkdown document contains text and code together. You can use RMarkdown to minimally format the prose of your manuscript. The code will become tables, plots, trees and other artifacts that you'll want in your document. 
 
 ## Anatomy of an RMarkdown document
 
-![rmarkdown.document](images/rmarkdown_document.png){width=75%}
+![rmarkdown.document](images/rmarkdown_document.png){width=90%}
 
 There are three distinct parts of your document
 
@@ -62,7 +66,8 @@ If you wanna learn more: https://cran.r-project.org/web/packages/ymlthis/vignett
 
 ## The prose
 
-We'll take a few minutes to explore formatting with RMarkdown. You can do quite a few things natively with RMarkdown. Things like _italics_, **bold face**, superscripts x^2^, subscripts H~2~O, and ~~strike through~~. 
+We'll take a few minutes to explore formatting with RMarkdown. You can do quite a few things natively with RMarkdown. Things like _italics_, **bold face**, superscripts x^2^, subscripts H~2~O, and ~~strike through~~.
+
 You also can include LaTeX formulas $sin(x)^2 + cos(x)^2 = 1$ 
 
 You can give your document structure by creating sections with headers. A top-level header starts with a single hashtag, second level with 2 hashtags, all the way to 6 levels deep. 
@@ -71,11 +76,11 @@ You can also do footnotes^[like this], insert images, and [hyperlinks](https://w
 
 Things you can't do: underline your text. 
 
-Things you technically can, but it is so painful you shouldn't: tables
+Things you technically can do, but it is so cumbersome you shouldn't: tables
 
-For things like images, tables, and plots. We will rely on R to do the heavy lifting because it offers greater control over the output and makes reproducibility a breeze. 
+For things like images, tables, and plots. We will rely on RMarkdown to do the heavy lifting because it offers greater control over the output and makes reproducibility easier. 
 
-For things like glosses and trees we will use a LaTeX environment inside a code chunk.
+For things like glosses and trees we will use LaTeX environments inside a code chunk.
 
 ## The code
 
@@ -83,19 +88,16 @@ There are two ways to include code in your document. One is _inline_ code; the o
 
 For instance, you might be describing you data and say ... "there are so many observations in the dataset." In the past, you'd have to know the number and type it out. If there were changes to the data, like more people answered your survey, or observations needed to be discarded, you would have to manually update your number. A better option is to ask R to check the value every time you need it. That way if there are changes in the data, those changes will be automatically reflected in your prose. 
 
-You add inline code in-between back ticks, like so: 
+You add inline code using back ticks, like so: 
 
-Total number of participants =  `native_part + nnative_part`. 
-
-This will create verbatim code. Meaning it would look like code but it won't be actual executable code. To make it actual code, you need to tell RMarkdown what kind language that code is in, so something like:
-
-` r native_part + nnative_part`. 
+Total number of participants =  ` r native_part + nnative_part`. 
 
 This will evaluate the expression every time you render your document, so that now the within the scope of the document, anytime there is a change to `native_part` or `nnative_part`, their sum will reflect that change. This is huge for reproducibility!
 
-A code chunk functions similarly. They just take three back ticks and they can contain as many lines of code as you want. You still need to specify the language the code chunk uses inside the curly brackets. The code chunk below loads the libraries we will use throughout the document.
+A code chunk functions similarly. They just take three back ticks and they can contain as many lines of code as you want. You still need to specify the language the code chunk uses inside the curly brackets. This code chunk below loads the libraries we will use throughout the document.
 
-```{r}
+```{r, echo = TRUE}
+
 library(tidyverse)
 library(rmarkdown)
 library(bookdown)
@@ -106,26 +108,24 @@ library(kableExtra)
 
 ```
 
-
-
 Something cool about your code chunks is that you can run them individually before you knit your entire document. That makes debugging easier!
 
 ## Code chunk options
 
 You can set different settings for your code chunks. You can check an exhaustive list of chunk options by visiting [https://yihui.org/knitr/options](https://yihui.org/knitr/options/)
 
-If you know that most of your chunks need to behave the same way, you can set global chunk options by running this inside a code chunk. For instance, I usually want the output of my chunks to be part of the document, but I rarely want the actual code to be included in the manuscript. 
+If you know that most of your chunks need to behave the same way, you can set global chunk options by running this inside a code chunk at the start of your document. For instance, I usually want the output of my chunks to be part of the document, but I rarely want the actual code to be included in the manuscript. 
 
 `knitr::opts_chunk$set(echo = FALSE,`  
                       `include = TRUE,`  
                       `message = FALSE,`  
                       `warning = FALSE)`  
                       
-<!-- Change the global chunk options now. Reknit and check the rendered document -->
+<!-- Change the global chunk options now. Re-knit and check the rendered document -->
 
 ## What is happening under the hood
 
-RMarkdown generates a new file that contains selected text, code, and results from the .Rmd file. The new file can be a finished _web page_, _PDF_, _MS Word_ document, _slide show_, _notebook_, _handout_, _book_, _dashboard_, _package vignette_ or many others.
+RMarkdown generates a new file that contains selected text and the output of the code. The new file can be a finished _PDF_, _web page_, _MS Word_ document, _slide show_, _notebook_, _handout_, _book_, _dashboard_, _package vignette_ or many others.
 
 ```{r, out.width="6in"}
 include_graphics("images/how_it_works.png")
@@ -137,7 +137,7 @@ When you press `Knit`, R Markdown feeds the `.Rmd` file to `knitr`, which execut
 
 # Leveraging R into our document.
 
-## Lets code along!
+## Let' s code along!
 1. Click on `File`
 1. `Create New Project`
 1. `New Directory`
@@ -145,7 +145,7 @@ When you press `Knit`, R Markdown feeds the `.Rmd` file to `knitr`, which execut
 1. Give a name, I chose `rmarkdown_for_linguists`. Pick `Desktop` on your computer hard drive and press `Create`
 1. That created a folder on your Desktop with that name
 1. I just sent you a zip file by email now. You can download it here: go.wisc.edu/vj1xh4 if you prefer.
-1. Extract the files and place them in the Desktop/rmarkdown_for_linguist folder that you now have. 
+1. Unzip the the file I sent you. Extract the files inside and place them in the Desktop/rmarkdown_for_linguists folder that you now have. 
 1. Go back to RStudio. Check the Files tab, lets examine what you have.
 1. Click on the rmarkdown_for_linguists.Rmd 
     
@@ -183,9 +183,9 @@ glimpse(beds)
 
 ### Exercise - inline code
 
-Write a descriptive sentence of the data you just read in that indicates the number of observations in the dataset. Hint: the R function you need to include in your code is `nrow()`. (2 minutes)
+Write a descriptive sentence of the data you just read in that indicates the number of observations in the dataset. Hint: the R function you need to include in your code is `nrow()`. This function takes an `R` object as its argument. (2 minutes to work on your own and ask questions)
 
-The dataset BEDS contains `r nrow(beds)`
+The dataset BEDS contains `r nrow(beds)`.
 
 ## Tables
 
@@ -212,7 +212,7 @@ beds %>% select(shell, stove, hardboil) %>%
 
 ### Exercise - tables
 
-Suppose you want to recreate the equivalent table **but** for the softboiled eggs variable. Go ahead and create a new code chunk and make the necessary changes to create that table. To create a new code chunk you can use `Code -> Insert Chunk` from the `Menu`. (3 minutes)
+Suppose you want to recreate the equivalent table **but** for the `softboil` eggs variable. Go ahead and create a new code chunk and make the necessary changes to create that table. To create a new code chunk you can use `Code -> Insert Chunk` from the `Menu`. (3 minutes to work on your own and ask questions)
 
 ```{r, fancy-table-2}
 beds %>% select(shell, stove, softboil) %>% 
@@ -241,32 +241,35 @@ include_graphics(path = "images/rmarkdown_document.png")
 
 Let me guess the workflow you likely use:
 
-1. you kept your data in Excel
-1. you subset by hand the part of the data you needed to create your plot and you moved it to a different sheet in your Excel workbook. Because you are so organized you probably named it something like "section2-plot2" 
-1. you created the plot you needed
+1. you kept your data in Excel.
+1. you subset by hand the part of the data you needed to create your plot and you moved it to a different sheet in your Excel workbook.  
+1. you created the plot you needed.
 1. you exported the plot to a .png or .jpeg format and named it accordingly
-1. you went to Word and imported the plot, placed it manually where you wanted it and tweaked until it looks just so
+1. you went to Word and imported the plot, placed it manually where you wanted it and tweaked until it looks just so.
 
-```{r, fancy-plot, fig.cap="Fancy plot", out.width="4in", fig.align='center', fig.pos="H"}
+That is a fine workflow to follow. Unless you have to redo the plot. 
+
+```{r, fancy-plot, fig.cap="Fancy plot", out.width="6in", fig.align='center', fig.pos="H"}
 beds %>% 
-  select(hardboil, softboil, shell, stove) %>% 
+  select(hardboil, softboil, stove, lid)%>% 
   pivot_longer(cols = c("hardboil", "softboil"), 
                values_to = "cooking_time", 
                names_to = "cooking_method") %>% 
   ggplot(aes(y = cooking_time, fill = cooking_method)) +
   geom_boxplot() +
-  facet_grid(shell~stove)
+  facet_grid(stove~lid)
 ```
 
 ### Exercise - plots 
 
-Suppose you want to create a plot that shows the distribution of responses for the variable `taste_hb` and you want those responses in a barplot. Hint: you only need to work with one variable and the geom that you need to use is `geom_bar()`. (5 minutes)
+Suppose you want to create a plot that shows the distribution of responses for the variable `taste_hb` and you want those responses in a bar plot. Hint: you only need to work with one variable and the geom that you need to use is `geom_bar()`. (5 minutes)
+
 
 ```{r, fancy-plot-2, fig.cap="Fancy plot", out.width="4in", fig.align='center', fig.pos="H"}
 
 beds %>% 
-    select(taste_hb) %>% 
-    ggplot(aes(x = taste_hb)) +
+    select(grad_st) %>% 
+    ggplot(aes(x = grad_st)) +
     geom_bar()
 
 ```
@@ -284,9 +287,9 @@ To be able to cross reference your figures, plots, and tables, you'll need to me
 
 a. a special kind of output from the `bookdown` package needs to be specified in the YAML header. Careful with the indentation! Don't include the backticks!  
 `bookdown::pdf_document2: default`
-a. the chunks that produce the output you want to cross reference need to be labeled. The label cannot contain underscores, dashes are okay!
-a. tables need to include a `caption = "caption"` argument in the `kable()` call.
-a. plots and figures need to include a `fig.cap = "caption"` in the chunk option
+a. the chunks that produce the output you want to cross reference need to be labeled. The label cannot contain underscores, dashes are okay tho!
+a. tables need to include a `caption = "caption_for_my table"` argument in the `kable()` call.
+a. plots and figures need to include a `fig.cap = "caption_for _my_figure"` in the chunk option
 a. to reference the artifacts, use the following syntax
     - for tables: `\@ref(tab:caption)`
     - for plots and figures: `\@ref(fig:caption)`
@@ -295,9 +298,9 @@ So far we have manage to create tables directly from the data that has been load
 
 ### Exercise - cross-referencing
 
-Make changes to table and plot you created in the exercises above so you can cross-reference them in a paragraph. (3 minutes)
+Make changes to the table and the plot you created in the exercises above so you can cross-reference them in a paragraph. (3 minutes)
 
-I created a new table for softboiled eggs, it is table \@ref(tab:fancy-table-2). I also created a plot, plot (\@ref(fig:fancy-plot-2)) shows the results. 
+I created a new table for softboiled eggs, it is table \@ref(tab:fancy-table-2). I also created a plot, plot \@ref(fig:fancy-plot-2) shows the results. 
 
 ## Citations
 
@@ -328,7 +331,7 @@ We have other options for formatting references:
 
 # Adding LaTeX flair to your document
 
-Something you probably have noticed is that your RMarkdown document limits a bit the way your manuscript is rendered. You have no control over double or single line spacing or indentations. We have no way to include glosses and syntactic trees natively. To address those details, we are going to bring in some LaTeX sorcery by including the following lines in the YAML header. This lines make sure that those LaTeX packages are available within your RMarkdown document. 
+Something you probably have noticed is that your RMarkdown document limits a bit the way your manuscript is rendered. You have no control over double or single line spacing or indentations. We have no way to include glosses and syntactic trees natively. To address those details, we are going to bring in some LaTeX sorcery by including the following lines in the YAML header. These lines make sure that those LaTeX packages are available within your RMarkdown document. 
 
 `header-includes:`  
 `- \usepackage{graphicx} %images`  
@@ -420,7 +423,7 @@ Make a copy of the chunk above and add your favorite idiom as a third example. W
 		{take out} the chestnuts {from the} fire\\
 		\trans lit: pull the chestnust from the fire. idm: help somebody
 		
-    	\ex\label{another-label-b} % subenvironment (2.b)
+    	\ex\label{another-label-c} % subenvironment (2.c)
 		\gll estirar la pata \\
 		stretch the leg\\
 		\trans lit: stretch the leg. idm: die
@@ -430,11 +433,11 @@ Make a copy of the chunk above and add your favorite idiom as a third example. W
 \end{exe}
 ```
 
-My favorite idiom is (\ref{another-label2-c}) because because it is knows everywhere in the Spanish-speaking world!
+My favorite idiom is (\ref{another-label2-c}) because because it is known everywhere in the Spanish-speaking world!
 
 ## Trees
 
-The last thing we will practice is making syntactic trees. Tree drawing also requires a LaTeX environment. You basically need to write your tree in bracket notation. The most basic tree I can think of is something like \@ref(fig:tree-00).  
+The last thing we will practice is making syntactic trees. Tree drawing also requires a LaTeX environment and the package `forest`. You basically need to write your tree in bracket notation. The most basic tree I can think of is something like \@ref(fig:tree-00).  
 
 ```{r , tree-00, fig.align='center', out.width="1.5in", fig.cap="Simple tree", fig.pos="H"}
 include_graphics("images/simple_tree.png")
@@ -460,7 +463,7 @@ Here's a simple trick I use to help me build them as quick as possible.
 
 And there is our tree! All the things you can do with LaTeX, you can do here since it is a TeX environment! If you want to take a deep dive, check the [Forest package](https://texdoc.org/serve/forest/0)
 
-For instance, showing movement with arrows would require you to label the _from_ and _to_ nodes using the `name` option. Then you'll have to actually draw the arrow using the command `\draw`. OJO! `\commands` need to end with a semicolon. They wont `knit` otherwise!
+You can, for instance, show movement with arrows. That would require you to label the _from_ and _to_ nodes using the `name` option. Then you'll have to actually draw the arrow using the command `\draw`. OJO! `\commands` need to end with a semicolon. They wont `knit` otherwise!
 
     [XP 
     [Spec, name=spec][X' 
@@ -480,7 +483,7 @@ For instance, showing movement with arrows would require you to label the _from_
 \end{exe}
 ```
 
-That arrow looks wonky, but that is exactly what we asked `Forest` to draw. To tweak the exit and entry points of the arrows, we need to use some basic cartography terminology! Check Figure \@ref(fig:compass) below:
+That arrow looks wonky, but that is exactly what we asked `Forest` to draw; arrows always flight straight! To tweak the exit and entry points of the arrows, we need to use some basic cartography terminology! Check Figure \@ref(fig:compass) below:
 
 
 ```{r, compass, fig.align='center', out.width="1.5in", fig.cap="compass", fig.pos="H"}
@@ -523,7 +526,7 @@ Draw a simple syntactic tree where you use a solid arrow to represent a Spec-hea
     [XP 
     [Spec, name=spec][X' 
     [X, name=head][YP]]]
-    \draw[->, dotted] (spec) to[out=south, in=north west] (head);
+    \draw[->, solid] (spec) to[out=south, in=north west] (head);
   \end{forest}
 \end{exe}
 ```
@@ -541,9 +544,9 @@ Draw a simple syntactic tree where you use a solid arrow to represent a Spec-hea
 - Consider using Git and Github with your R project. It's the second best thing I have learned. Check https://happygitwithr.com/rstudio-git-github.html.
 - RMarkdown lets you create more than just pdfs: my personal website is done with `blogdown`. I make my  classroom slides `xaringan`. Check [erwinlares.com](erwinlares.com)!
 - If you couldn't finished all the things we did today, you can download a copy of the completed document we worked on today here: https://go.wisc.edu/i1yq5p
-- Don't hesitate to reach out if you have questions or need help! lares@wisc.edu!
+- Don't hesitate to reach out if you have questions, need help or want to collaborate! lares@wisc.edu!
 - Your headings don't work? Make sure there is a space between the hashtag and the text of your heading.
-- Did you notice that because the trees we drew have a label, we can cross reference them!
+- Did you notice that because the trees we drew have labels, we can cross reference them!
 - R for Data Science is a great resource. It is also free at https://r4ds.had.co.nz/. 
 - I check this book all the time when I have RMarkdown questions: https://bookdown.org/yihui/rmarkdown/.
 - If I couldn't find the answers there, I usually go here: https://bookdown.org/yihui/rmarkdown-cookbook/
