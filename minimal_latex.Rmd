@@ -1,0 +1,77 @@
+---
+title: "latex_document"
+author: "Erwin Lares"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  bookdown::pdf_document2: default
+header-includes:
+- \usepackage{graphicx}
+- \usepackage{float}
+- \usepackage{longtable}
+- \usepackage{gb4e} \noautomath % for glosses.without this it won't compile!!!
+- \usepackage{ragged2e}
+- \usepackage[linguistics]{forest}
+- \usepackage{setspace}\doublespacing
+- \usepackage{inputenc}
+- \usepackage{indentfirst}
+---
+
+```{r loading-library, include=FALSE, echo=FALSE}
+library(tidyverse)
+library(kableExtra)
+library(tinytex)
+library(rmarkdown)
+library(bookdown)
+library(knitr)
+library(broom)
+#install.packages("xfun")
+library(xfun)
+```
+
+
+The purpose of this document is to trigger `tinytex` to install the libraries you'll need to use during the workshop on Thursday. 
+
+Just press the `Knit` button and sit back. This will take a while, around 10 minutes depending on your machine and your internet connection. 
+
+You should end up with a nice pdf. Don't hesitate to email me if you run into trouble. 
+
+Good luck!
+
+\newpage
+\FlushLeft
+\singlespacing
+
+```{=tex}
+\begin{exe} 
+    \ex\label{level-1}
+    \begin{xlist} 
+        
+        \ex\label{level-1-a}
+        \gll text a.\\
+          text a\\
+        \trans ‘text a’
+        
+        \ex\label{level-1-b}
+        \gll text b.\\
+          text b\\
+        \trans ‘text b’
+       
+    \end{xlist}
+\end{exe}
+```
+
+
+```{=tex}
+\begin{exe}
+\ex\label{tree-1}
+% if there is text, it goes here
+  \hfil
+  \begin{forest}
+    [A [B][C]]
+  \end{forest}
+  \hfil
+\end{exe}
+```
+
+We have created a sentence (\ref{level-1}) and a tree (\ref{tree-1})!
+

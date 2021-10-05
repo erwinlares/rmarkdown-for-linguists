@@ -1,20 +1,43 @@
 ---
 title: "RMarkdown for Linguists  | HLS 2021"
 author: "Erwin Lares"
-date: "Created: 29 Sept 2021"
-output: pdf_document
+date: "Created: 29 Sept 2021 | Last Updated: `r format(Sys.time(), '%d %B %Y')`"
+output: 
+  bookdown::pdf_document2: default
+bibliography: minimal.bib
+csl: lares.csl
+header-includes:  
+- \usepackage{graphicx} %images  
+- \usepackage{float} %captions
+- \usepackage{longtable} %table across pages  
+- \usepackage{gb4e} \noautomath %glosses  
+- \usepackage{ragged2e} %text  
+- \usepackage{setspace}\doublespacing   
+- \usepackage{indentfirst} 
+- \usepackage[utf8]{inputenc}
+- \usepackage[linguistics]{forest}
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE,
+                      include = TRUE, 
+                      message = FALSE, 
+                      warning = FALSE)
 
 ```
+
+\FlushLeft
+\newpage
+\setlength\parindent{24pt}
+
 
 # What is all this about?
 
 My lofty goal is to show you how to use a tool that will increase the transparency, reproducibility and efficiency of your research. To do this we are going to attempt some _live coding_. I'll start by doing some talking and demoing, then I'll give you time to work on your own document. 
 
-When we are about to start Section 2, I'll share with you a copy of this document you see me working on. As the presentation progresses, we will fill in the blanks together, complete activities, and run the code, so we get an opportunity to practice the strategies and ideas I'm presenting. For now just open RStudio.
+When we are about to start Section 2, I'll share with you a copy of this document you see me working on. As the presentation progresses, we will fill in the blanks together, complete activities, and run the code, so we get an opportunity to practice the strategies and ideas I'm presenting. Don't worry, we'll get errors too!
+
+For now just open RStudio and hand tight.
 
 R is a very popular scripting language with a strong statistical foundation. RStudio is a popular IDE for R. RMarkdown is the RStudio implementation of Markdown. Markdown down is a lightweight markup language for creating formatted text using a plain-text editor. An RMarkdown document contains text and code together. You can use RMarkdown to minimally format the prose of your manuscript. The code will become tables, plots, trees and other artifacts that you'll want in your document. 
 
@@ -79,9 +102,11 @@ library(bookdown)
 library(knitr)
 library(kableExtra)
 
-#talk about running chunks. knit and check the pdf. Do we like this?
+#talk about running individual chunks, knit and check the pdf. Do we like this?
 
 ```
+
+
 
 Something cool about your code chunks is that you can run them individually before you knit your entire document. That makes debugging easier!
 
@@ -89,7 +114,7 @@ Something cool about your code chunks is that you can run them individually befo
 
 You can set different settings for your code chunks. You can check an exhaustive list of chunk options by visiting [https://yihui.org/knitr/options](https://yihui.org/knitr/options/)
 
-If you know that most of your chunks need to behave the same qay, you can set global chunk options by running this inside a code chunk. For instance, I usually want the output of my chunks to be part of the document, but I rarely want the actual code to be included in the manuscript. 
+If you know that most of your chunks need to behave the same way, you can set global chunk options by running this inside a code chunk. For instance, I usually want the output of my chunks to be part of the document, but I rarely want the actual code to be included in the manuscript. 
 
 `knitr::opts_chunk$set(echo = FALSE,`  
                       `include = TRUE,`  
@@ -100,7 +125,7 @@ If you know that most of your chunks need to behave the same qay, you can set gl
 
 ## What is happening under the hood
 
-R Markdown generates a new file that contains selected text, code, and results from the .Rmd file. The new file can be a finished _web page_, _PDF_, _MS Word_ document, _slide show_, _notebook_, _handout_, _book_, _dashboard_, _package vignette_ or many others.
+RMarkdown generates a new file that contains selected text, code, and results from the .Rmd file. The new file can be a finished _web page_, _PDF_, _MS Word_ document, _slide show_, _notebook_, _handout_, _book_, _dashboard_, _package vignette_ or many others.
 
 ```{r, out.width="6in"}
 include_graphics("images/how_it_works.png")
@@ -117,9 +142,10 @@ When you press `Knit`, R Markdown feeds the `.Rmd` file to `knitr`, which execut
 1. `Create New Project`
 1. `New Directory`
 1. `New Project`
-1. Give a name, pick `Desktop` on your computer hard drive and press `Create`
-1. I just sent you a zip file by email now. You can download it here: go.wisc.edu/vj1xh4.
-1. Extract the files and place them in the Desktop/Rmarkdown_for_linguist folder that you now have. 
+1. Give a name, I chose `rmarkdown_for_linguists`. Pick `Desktop` on your computer hard drive and press `Create`
+1. That created a folder on your Desktop with that name
+1. I just sent you a zip file by email now. You can download it here: go.wisc.edu/vj1xh4 if you prefer.
+1. Extract the files and place them in the Desktop/rmarkdown_for_linguist folder that you now have. 
 1. Go back to RStudio. Check the Files tab, lets examine what you have.
 1. Click on the rmarkdown_for_linguists.Rmd 
     
@@ -140,7 +166,8 @@ We will use a toy data set that I created. I wasn't sure what kind of data I was
 
 ```{r}
 
-beds <- read_csv(file="data/beds.csv") 
+beds <- read_csv(file="data/beds.csv") %>% 
+    filter(grad_st != 8)
 
 ```
 
@@ -149,6 +176,7 @@ beds <- read_csv(file="data/beds.csv")
 There are tons of ways to explore data in R. Not the point of the workshop today, but more as a motivation for one way we commonly use to present data: tables. 
 
 ```{r}
+
 glimpse(beds)
 
 ```
@@ -156,6 +184,8 @@ glimpse(beds)
 ### Exercise - inline code
 
 Write a descriptive sentence of the data you just read in that indicates the number of observations in the dataset. Hint: the R function you need to include in your code is `nrow()`. (2 minutes)
+
+The dataset BEDS contains `r nrow(beds)`
 
 ## Tables
 
@@ -184,6 +214,20 @@ beds %>% select(shell, stove, hardboil) %>%
 
 Suppose you want to recreate the equivalent table **but** for the softboiled eggs variable. Go ahead and create a new code chunk and make the necessary changes to create that table. To create a new code chunk you can use `Code -> Insert Chunk` from the `Menu`. (3 minutes)
 
+```{r, fancy-table-2}
+beds %>% select(shell, stove, softboil) %>% 
+    group_by(shell, stove) %>% 
+    summarize(mean_hb = mean(softboil)) %>% 
+#kable()  
+  kable(format = "latex",
+        booktabs = TRUE,
+        digits = 2, 
+        caption = "Fancy Table 2") %>% 
+  kable_styling(latex_options = c("striped",
+                                  font_size = 10,
+                                  "H"
+                                  )) 
+```
 
 ## Images 
 
@@ -218,6 +262,16 @@ beds %>%
 
 Suppose you want to create a plot that shows the distribution of responses for the variable `taste_hb` and you want those responses in a barplot. Hint: you only need to work with one variable and the geom that you need to use is `geom_bar()`. (5 minutes)
 
+```{r, fancy-plot-2, fig.cap="Fancy plot", out.width="4in", fig.align='center', fig.pos="H"}
+
+beds %>% 
+    select(taste_hb) %>% 
+    ggplot(aes(x = taste_hb)) +
+    geom_bar()
+
+```
+
+
 ## Changes in the data? 
 
 Suppose you find out one of your grad students was involved in a evil plot with Reviewer #2 to thwart your research by introducing faulty data! Grad student #8 used the wrong equipment to measure cooking times! 
@@ -230,7 +284,7 @@ To be able to cross reference your figures, plots, and tables, you'll need to me
 
 a. a special kind of output from the `bookdown` package needs to be specified in the YAML header. Careful with the indentation! Don't include the backticks!  
 `bookdown::pdf_document2: default`
-a. the chunks that produuce the output you want to cross reference need to be labeled. The label cannot contain underscores, dashes are okay!
+a. the chunks that produce the output you want to cross reference need to be labeled. The label cannot contain underscores, dashes are okay!
 a. tables need to include a `caption = "caption"` argument in the `kable()` call.
 a. plots and figures need to include a `fig.cap = "caption"` in the chunk option
 a. to reference the artifacts, use the following syntax
@@ -243,6 +297,8 @@ So far we have manage to create tables directly from the data that has been load
 
 Make changes to table and plot you created in the exercises above so you can cross-reference them in a paragraph. (3 minutes)
 
+I created a new table for softboiled eggs, it is table \@ref(tab:fancy-table-2). I also created a plot, plot (\@ref(fig:fancy-plot-2)) shows the results. 
+
 ## Citations
 
 This is one of my favorites things about using RMarkdown. Imagine that you have to submit the same manuscript to various places. Each of these places is asking you to follow a different citation style ...
@@ -251,7 +307,7 @@ If you do your document with RMarkdown, you can leave everything the same and ju
 
 There is a huge repo of .csl files maintained by Zotero at https://www.zotero.org/styles. 
 
-For this workshop we will work with a .csl I customized. We will also need a .bib file containing the actual bibliographical information we need. This files need to live in the same project file. We specify those two pieces of information in the YAML header like so:
+For this workshop we will work with a .csl I customized. We will also need a .bib file containing the actual bibliographical information we need. These files need to live in the same project file. We specify those two pieces of information in the YAML header like so:
 
   - `bibliography: minimal.bib`
   - `csl: lares.csl`
@@ -260,7 +316,7 @@ Once that is done, we can include citations anywhere in the prose with the synta
 
 For instance, adding `@Abramson1973` becomes 
 
->@Abramson1973 finds that VOT of Spanish /ptk/ and English /ptk/ do not overlap.
+@Abramson1973 finds that VOT of Spanish /ptk/ and English /ptk/ do not overlap.
 
 We have other options for formatting references:
 
@@ -298,7 +354,7 @@ To create sentence examples, we rely on the LaTeX package `gb4e`. We will write 
 
 --- 
 
-```{r, eval=FALSE}
+```{=tex}
 \begin{exe}
 	\ex\label{unique-label}
   This is a sentence.
@@ -307,7 +363,7 @@ To create sentence examples, we rely on the LaTeX package `gb4e`. We will write 
 
 RMarkdown lets you reference sentences created within a `exe` environment **if** they have a label. The syntax is similar to what we did for tables and plots, but not quite the same: `\ref{unique-label}`. 
 
-For example, as seen in (\ref{unique-label}), RMarkdown will take care of your example numbering and it will be dynamic. Meaning that if you need to insert a new example before this one, it will get renumbered.
+For example, as seen in (\ref{unique-label}), RMarkdown will take care of your example numbering and it will be dynamic. Meaning that if you need to insert a new example before this one, it will get renumbered to (2).
 
 You know glossing is a pain. How much time have you spent aligning each word with its corresponding gloss? If you have examples that require glosses or multiple instances of one example, you'll need to create a subenvironment with `{xlist}` within the parent `{exe}` environment, like so:
 
@@ -320,19 +376,24 @@ You know glossing is a pain. How much time have you spent aligning each word wit
 
 ---
 
-```{r, eval=FALSE}
+```{=tex}
 \begin{exe} % sets up the top-level example environment (2) 
 	\ex\label{another-label}
+
 	\begin{xlist} % subenvironment (2.a)
+
 		\ex\label{another-label-a}
 		\gll sacar la pata del barro \\
 		{take out} the leg {from the} mud \\
 		\trans lit: 'take out the leg from the mud. idm: help somebody 
+
 		\ex\label{another-label-b} % subenvironment (2.b)
 		\gll sacar las castañas del fuego \\
 		{take out} the chestnuts {from the} fire\\
 		\trans lit: pull the chestnust from the fire. idm: help somebody
+
 	\end{xlist} % end first embedding
+
 \end{exe}
 ```
 
@@ -342,8 +403,34 @@ This gives us more granular control of the example sentences. For instance, (\re
 
 Make a copy of the chunk above and add your favorite idiom as a third example. Write a sentence cross-referencing the example you wrote indicating why it is your favorite idiom. 
 
-My favorite idiom is (\ref{another-label2-c}) because because it is knows everywhere in the Spanish-speaking world!
 
+```{=tex}
+\begin{exe} % sets up the top-level example environment (2) 
+	\ex\label{another-label}
+
+	\begin{xlist} % subenvironment (2.a)
+
+		\ex\label{another-label-a}
+		\gll sacar la pata del barro \\
+		{take out} the leg {from the} mud \\
+		\trans lit: 'take out the leg from the mud. idm: help somebody 
+
+		\ex\label{another-label-b} % subenvironment (2.b)
+		\gll sacar las castañas del fuego \\
+		{take out} the chestnuts {from the} fire\\
+		\trans lit: pull the chestnust from the fire. idm: help somebody
+		
+    	\ex\label{another-label-b} % subenvironment (2.b)
+		\gll estirar la pata \\
+		stretch the leg\\
+		\trans lit: stretch the leg. idm: die
+
+	\end{xlist} % end first embedding
+
+\end{exe}
+```
+
+My favorite idiom is (\ref{another-label2-c}) because because it is knows everywhere in the Spanish-speaking world!
 
 ## Trees
 
@@ -359,7 +446,7 @@ Here's a simple trick I use to help me build them as quick as possible.
     [Spec][X' 
           [X][YP]]]
 
-```{r, eval=FALSE}
+```{=tex}
 \begin{exe}
 \ex\label{tree-01}
   \hfil
@@ -380,7 +467,7 @@ For instance, showing movement with arrows would require you to label the _from_
     [X][YP, name=complement]]]
     \draw[->, dotted] (complement) to (spec);
     
-```{r, eval=FALSE}
+```{=tex}
 \begin{exe}
 \ex\label{tree-02}
   \hfil
@@ -411,7 +498,7 @@ Putting it all together, we need to tell the direction we want the arrow to exit
     \draw[->, dotted] (complement) to[out=south west, in=south] (spec);
 
 
-```{r, eval=FALSE}
+```{=tex}
 \begin{exe}
 \ex\label{tree-03}
   \hfil
@@ -428,8 +515,21 @@ Putting it all together, we need to tell the direction we want the arrow to exit
  
 Draw a simple syntactic tree where you use a solid arrow to represent a Spec-head relationship. (3 minutes)
 
+```{=tex}
+\begin{exe}
+\ex\label{tree-03}
+  \hfil
+  \begin{forest}
+    [XP 
+    [Spec, name=spec][X' 
+    [X, name=head][YP]]]
+    \draw[->, dotted] (spec) to[out=south, in=north west] (head);
+  \end{forest}
+\end{exe}
+```
 
-# A few more tricks
+
+# A few more tricks{#a-few-more-tricks}
 
 - include this in your YAML for latest version information:  
     - Last Updated: ` r format(Sys.time(), '%d %B %Y')`.  
@@ -443,6 +543,10 @@ Draw a simple syntactic tree where you use a solid arrow to represent a Spec-hea
 - If you couldn't finished all the things we did today, you can download a copy of the completed document we worked on today here: https://go.wisc.edu/i1yq5p
 - Don't hesitate to reach out if you have questions or need help! lares@wisc.edu!
 - Your headings don't work? Make sure there is a space between the hashtag and the text of your heading.
-- Did you notice that because the trees we drew have a label, we can cross reference them?
+- Did you notice that because the trees we drew have a label, we can cross reference them!
+- R for Data Science is a great resource. It is also free at https://r4ds.had.co.nz/. 
+- I check this book all the time when I have RMarkdown questions: https://bookdown.org/yihui/rmarkdown/.
+- If I couldn't find the answers there, I usually go here: https://bookdown.org/yihui/rmarkdown-cookbook/
 
-# References
+\newpage
+# References{-}
