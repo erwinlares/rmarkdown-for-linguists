@@ -2,18 +2,39 @@
 title: "RMarkdown for Linguists  | HLS 2021"
 author: "Erwin Lares "
 abstract: "This document is licensed under Creative Commons Attribution 2.0 Generic (CC BY 2.0). You are free to (a) Share — copy and redistribute the material in any medium or format. (b) Adapt — remix, transform, and build upon the material for any purpose, even commercially. (c) Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use."
-date: "Created: 29 Sept 2021"
+date: "Created: 29 Sept 2021 | Last Updated: `r format(Sys.time(), '%d %B %Y')`"
 affiliation: "Department of Spanish a& Portuguese @ UW-Madison"
-output: pdf_document
+output: 
+  bookdown::pdf_document2: default
+bibliography: minimal.bib
+csl: lares.csl
+header-includes:  
+- \usepackage{graphicx} %images  
+- \usepackage{float} %captions
+- \usepackage{longtable} %table across pages  
+- \usepackage{gb4e} \noautomath %glosses  
+- \usepackage{ragged2e} %text  
+- \usepackage{setspace}\doublespacing   
+- \usepackage{indentfirst} 
+- \usepackage[utf8]{inputenc}
+- \usepackage[linguistics]{forest}
 ---
 
 ```{r setup, include=FALSE}
 
-knitr::opts_chunk$set()
-
+knitr::opts_chunk$set(echo = FALSE, 
+                      include = TRUE,
+                      message = FALSE, 
+                      warning = FALSE)
 native_part <-  25
 nnative_part <-  30
 ```
+
+
+\FlushLeft
+\newpage
+\setlength\parindent{24pt}
+
 
 # What is all this about?
 
@@ -166,6 +187,8 @@ glimpse(beds)
 
 Write a descriptive sentence of the data you just read in that indicates the number of observations in the dataset using the inline code syntax. Hint: the R function you need to include in your code is `nrow()`. This function takes an `R` object as its argument. (2 minutes to work on your own and ask questions)
 
+The dataset BEDS contains `r nrow(beds)` observations.
+
 ## Tables
 
 I'm sure you recognize this scenario: you have you data stored somewhere, and you need to display part of your data in a table as part of your analysis. You probably only need part of the data, perhaps you need some summary statistics, and you definitely don't need 16 decimal places. Having your data in `R` streamlines that process.
@@ -193,6 +216,20 @@ beds %>% select(shell, stove, hardboil) %>%
 
 Suppose you want to recreate the equivalent table **but** for the `softboil` eggs variable. Go ahead and create a new code chunk and make the necessary changes to create that table. To create a new code chunk you can use `Code -> Insert Chunk` from the `Menu`. (3 minutes to work on your own and ask questions)
 
+```{r, fancy-table-2}
+beds %>% select(shell, stove, softboil) %>% 
+    group_by(shell, stove) %>% 
+    summarize(mean_hb = mean(softboil)) %>% 
+#kable()  
+  kable(format = "latex",
+        booktabs = TRUE,
+        digits = 2, 
+        caption = "Fancy Table 2") %>% 
+  kable_styling(latex_options = c("striped",
+                                  font_size = 10,
+                                  "H"
+                                  )) 
+```
 
 ## Images 
 
@@ -226,6 +263,15 @@ beds |>
 Suppose you want to create a plot that shows how many observation each of the grad students recorded. You also want those responses in a bar plot. Hint: you only need to work with one variable and the geom that you need to use is `geom_bar()`. (5 minutes)
 
 
+```{r, fancy-plot-2, fig.cap="Fancy plot", out.width="4in", fig.align='center', fig.pos="H"}
+
+beds %>% 
+    ggplot(aes(x = grad_st)) +
+    geom_bar()
+
+```
+
+
 ## Changes in the data? 
 
 Suppose you find out one of your grad students was involved in a evil plot with Reviewer #2 to thwart your research by introducing faulty data! Grad student #8 used the wrong equipment to measure cooking times! 
@@ -251,6 +297,7 @@ So far we have manage to create tables directly from the data that has been load
 
 Make changes to the table and the plot you created in the exercises above so you can cross-reference them in a paragraph. (3 minutes)
 
+I created a new table for softboiled eggs, it is table \@ref(tab:fancy-table-2). I also created a plot, plot \@ref(fig:fancy-plot-2) shows the results. 
 
 ## Citations
 
@@ -307,7 +354,7 @@ To create sentence examples, we rely on the LaTeX package `gb4e`. We will write 
 
 --- 
 
-```{r, eval = FALSE}
+```{=tex}
 \begin{exe}
 	\ex\label{unique-label}
   This is a sentence.
@@ -329,7 +376,7 @@ You know glossing is a pain. How much time have you spent aligning each word wit
 
 ---
 
-```{r, eval = FALSE}
+```{=tex}
 \begin{exe} % sets up the top-level example environment (2) 
 	\ex\label{another-label}
 
@@ -357,6 +404,31 @@ This gives us more granular control of the example sentences. For instance, (\re
 Make a copy of the chunk above and add your favorite idiom as a third example. Write a sentence cross referencing the example you wrote indicating why it is your favorite idiom. 
 
 
+```{=tex}
+\begin{exe} % sets up the top-level example environment (2) 
+	\ex\label{another-label2}
+
+	\begin{xlist} % subenvironment (2.a)
+
+		\ex\label{another-label2-a}
+		\gll sacar la pata del barro \\
+		{take out} the leg {from the} mud \\
+		\trans lit: 'take out the leg from the mud. idm: help somebody 
+
+		\ex\label{another-label2-b} % subenvironment (2.b)
+		\gll sacar las castañas del fuego \\
+		{take out} the chestnuts {from the} fire\\
+		\trans lit: pull the chestnust from the fire. idm: help somebody
+		
+    	\ex\label{another-label2-c} % subenvironment (2.c)
+		\gll estirar la pata \\
+		stretch the leg\\
+		\trans lit: stretch the leg. idm: die
+
+	\end{xlist} % end first embedding
+
+\end{exe}
+```
 
 My favorite idiom is (\ref{another-label2-c}) because because it is known everywhere in the Spanish-speaking world!
 
@@ -374,7 +446,7 @@ Here's a simple trick I use to help me build them as quickly as possible.
     [Spec][X' 
           [X][YP]]]
 
-```{r, eval = FALSE}
+```{=tex}
 \begin{exe}
 \ex\label{tree-01}
   \hfil
@@ -395,7 +467,7 @@ You can, for instance, show movement with arrows. That would require you to labe
     [X][YP, name=complement]]]
     \draw[->, dotted] (complement) to (spec);
     
-```{r, eval = FALSE}
+```{=tex}
 \begin{exe}
 \ex\label{tree-02}
   \hfil
@@ -426,7 +498,7 @@ Putting it all together, we need to tell the direction we want the arrow to exit
     \draw[->, dotted] (complement) to[out=south west, in=south] (spec);
 
 
-```{r, eval = FALSE}
+```{=tex}
 \begin{exe}
 \ex\label{tree-03}
   \hfil
@@ -443,7 +515,21 @@ Putting it all together, we need to tell the direction we want the arrow to exit
  
 Draw a simple syntactic tree where you use a solid arrow to represent a Spec-head relationship. (3 minutes)
 
-# A few more tricks
+```{=tex}
+\begin{exe}
+\ex\label{tree-03}
+  \hfil
+  \begin{forest}
+    [XP 
+    [Spec, name=spec][X' 
+    [X, name=head][YP]]]
+    \draw[->, solid] (spec) to[out=south, in=north west] (head);
+  \end{forest}
+\end{exe}
+```
+
+
+# A few more tricks{#a-few-more-tricks}
 
 - include this in your YAML for latest version information:  
     - Last Updated: ` r format(Sys.time(), '%d %B %Y')`.  
@@ -462,4 +548,5 @@ Draw a simple syntactic tree where you use a solid arrow to represent a Spec-hea
 - I check this book all the time when I have RMarkdown questions: https://bookdown.org/yihui/rmarkdown/.
 - If I couldn't find the answers there, I usually go here: https://bookdown.org/yihui/rmarkdown-cookbook/
 
-# References
+\newpage
+# References{-}
