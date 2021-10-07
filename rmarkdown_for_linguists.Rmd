@@ -454,10 +454,10 @@ Draw a simple syntactic tree where you use a solid arrow to represent a Spec-hea
 - You can label your sections for cross referencing. You can also keep sections from being numbered in  the the Table of Content, great for References and Appendices by labeling it with a minus sign. Check out section \ref{a-few-more-tricks}.
 - Consider using Git and Github with your R project. It's the second best thing I have learned. Check https://happygitwithr.com/rstudio-git-github.html.
 - RMarkdown lets you create more than just pdfs: my personal website is done with `blogdown`. I make my  classroom slides `xaringan`. Check [erwinlares.com](erwinlares.com)!
-- If you couldn't finished all the things we did today, you can download a copy of the completed document we worked on today here: https://go.wisc.edu/i1yq5p
+- If you couldn't finish all the things we did today, you can download a copy of the completed document we worked on today here: https://go.wisc.edu/t50wme
 - Don't hesitate to reach out if you have questions, need help or want to collaborate on a cool linguistic project! lares@wisc.edu!
 - Your headings don't work? Make sure there is a space between the hashtag and the text of your heading.
-- Did you notice that because the trees we drew have labels, we can cross reference them!
+- Did you notice that because the trees we drew have labels? we can cross reference them!
 - R for Data Science is a great resource. It is also free at https://r4ds.had.co.nz/. 
 - I check this book all the time when I have RMarkdown questions: https://bookdown.org/yihui/rmarkdown/.
 - If I couldn't find the answers there, I usually go here: https://bookdown.org/yihui/rmarkdown-cookbook/
