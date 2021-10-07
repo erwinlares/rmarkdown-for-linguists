@@ -2,18 +2,39 @@
 title: "RMarkdown for Linguists  | HLS 2021"
 author: "Erwin Lares "
 abstract: "This document is licensed under Creative Commons Attribution 2.0 Generic (CC BY 2.0). You are free to (a) Share — copy and redistribute the material in any medium or format. (b) Adapt — remix, transform, and build upon the material for any purpose, even commercially. (c) Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use."
-date: "Created: 29 Sept 2021"
-affiliation: "Department of Spanish a& Portuguese @ UW-Madison"
-output: pdf_document
+date: "Created: 29 Sept 2021 | Last Updated: `r format(Sys.time(), '%d %B %Y')`"
+affiliation: "Department of Spanish & Portuguese @ UW-Madison"
+output: 
+  bookdown::pdf_document2: default
+bibliography: minimal.bib
+csl: lares.csl
+header-includes:  
+- \usepackage{graphicx} %images  
+- \usepackage{float} %captions 
+- \usepackage{longtable} %table across page  
+- \usepackage{gb4e} \noautomath %glosses  
+- \usepackage{ragged2e} %text 
+- \usepackage{setspace}\doublespacing  
+- \usepackage{indentfirst}   
+- \usepackage[utf8]{inputenc} 
+- \usepackage[linguistics]{forest}
 ---
 
 ```{r setup, include=FALSE}
 
-knitr::opts_chunk$set()
+knitr::opts_chunk$set(echo = FALSE,
+                      include = TRUE, 
+                      message = FALSE, 
+                      warning = FALSE)
 
 native_part <-  25
 nnative_part <-  30
 ```
+
+\FlushLeft
+\newpage
+\setlength\parindent{24pt}
+
 
 # What is all this about?
 
@@ -72,7 +93,7 @@ A better option would be to ask R to check the value every time you need it. Tha
 
 You add inline code using back ticks, like so: 
 
-"there are `r native_part + nnative_part` participant presented in the dataset."
+"there are `r native_part + nnative_part` participants presented in the dataset."
 
 This will evaluate the expression every time you render your document, so that now the within the scope of the document, anytime there is a change to `native_part` or `nnative_part`, their sum will reflect that change.
 
@@ -148,7 +169,8 @@ We will use a toy data set that I created. I wasn't sure what kind of data I was
 
 ```{r}
 
-beds <- read_csv(file="data/beds.csv")
+beds <- read_csv(file="data/beds.csv") %>% 
+    filter(grad_st != 8)
 
 ```
 
@@ -165,6 +187,8 @@ glimpse(beds)
 ### Exercise - inline code
 
 Write a descriptive sentence of the data you just read in that indicates the number of observations in the dataset using the inline code syntax. Hint: the R function you need to include in your code is `nrow()`. This function takes an `R` object as its argument. (2 minutes to work on your own and ask questions)
+
+In this data set the numbers of observations is `r nrow(beds)`.
 
 ## Tables
 
@@ -193,6 +217,21 @@ beds %>% select(shell, stove, hardboil) %>%
 
 Suppose you want to recreate the equivalent table **but** for the `softboil` eggs variable. Go ahead and create a new code chunk and make the necessary changes to create that table. To create a new code chunk you can use `Code -> Insert Chunk` from the `Menu`. (3 minutes to work on your own and ask questions)
 
+
+```{r, fancy-table-2}
+beds %>% select(shell, stove, softboil) %>% 
+    group_by(shell, stove) %>% 
+    summarize(mean_hb = mean(softboil)) %>% 
+#kable()  
+  kable(format = "latex",
+        booktabs = TRUE,
+        digits = 2, 
+        caption = "Fancy Table") %>% 
+  kable_styling(latex_options = c("striped",
+                                  font_size = 10,
+                                  "H"
+                                  )) 
+```
 
 ## Images 
 
@@ -225,12 +264,21 @@ beds |>
 
 Suppose you want to create a plot that shows how many observation each of the grad students recorded. You also want those responses in a bar plot. Hint: you only need to work with one variable and the geom that you need to use is `geom_bar()`. (5 minutes)
 
+```{r, fancy-plot-2, fig.cap="Fancy plot", out.width="6in", fig.align='center', fig.pos="H"}
+beds |> 
+  ggplot(aes(x = grad_st)) +
+  geom_bar()
+```
 
 ## Changes in the data? 
 
 Suppose you find out one of your grad students was involved in a evil plot with Reviewer #2 to thwart your research by introducing faulty data! Grad student #8 used the wrong equipment to measure cooking times! 
 
 Fortunately all you have to do is discard all the observations done by grad student #8 right after you read your data and re-knit your document!!!
+
+You can do this by piping the `read_csv()` statement into this filter statement right after you read it in, like so:
+
+`read_cvs("data/beds.csv") %>% filter(grad_st != 8)`
 
 ## Cross referencing artifacts throughout your document. 
 
@@ -245,12 +293,13 @@ a. to reference the artifacts, use the following syntax
     - for tables: `\@ref(tab:caption)`
     - for plots and figures: `\@ref(fig:caption)`
     
-So far we have manage to create tables directly from the data that has been loaded into R, see Table \@ref(tab:fancy-table). Images can also be included into R with the function `include_graphics()`, see Figure \@ref(fig:fancy-image). Lastly, we learn to include plots generated directly from the loaded data as seen in Figure \@ref(fig:fancy-plot).
+So far we have managed to create tables directly from the data that has been loaded into R, see Table \@ref(tab:fancy-table). Images can also be included into R with the function `include_graphics()`, see Figure \@ref(fig:fancy-image). Lastly, we learn to include plots generated directly from the loaded data as seen in Figure \@ref(fig:fancy-plot).
 
 ### Exercise - cross-referencing
 
 Make changes to the table and the plot you created in the exercises above so you can cross-reference them in a paragraph. (3 minutes)
 
+We created table number \@ref(tab:fancy-table-2) and a plot number \@ref(fig:fancy-plot-2)
 
 ## Citations
 
@@ -281,7 +330,9 @@ We have other options for formatting references:
 
 # Adding LaTeX flair to your document
 
-Something you probably have noticed is that your RMarkdown document limits a bit the way your manuscript is rendered. You have no control over double or single line spacing or indentations. We have no way to include glosses and syntactic trees natively. To address those details, we are going to bring in some LaTeX sorcery by including the following lines in the YAML header. These lines make sure that those LaTeX packages are available within your RMarkdown document. 
+Something you probably have noticed is that your RMarkdown document limits a bit the way your manuscript is rendered. You have no control over double or single line spacing or indentations. We have no way to include glosses and syntactic trees natively. To address those details, we are going to bring in some LaTeX sorcery by including the following lines in the YAML header. 
+
+These lines make sure that those LaTeX packages are available within your RMarkdown document when you add them to your YAML header. Don't forget to remove the back ticks.
 
 `header-includes:`  
 `- \usepackage{graphicx} %images`  
@@ -307,7 +358,7 @@ To create sentence examples, we rely on the LaTeX package `gb4e`. We will write 
 
 --- 
 
-```{r, eval = FALSE}
+```{=tex}
 \begin{exe}
 	\ex\label{unique-label}
   This is a sentence.
@@ -329,7 +380,7 @@ You know glossing is a pain. How much time have you spent aligning each word wit
 
 ---
 
-```{r, eval = FALSE}
+```{=tex}
 \begin{exe} % sets up the top-level example environment (2) 
 	\ex\label{another-label}
 
@@ -356,9 +407,34 @@ This gives us more granular control of the example sentences. For instance, (\re
 
 Make a copy of the chunk above and add your favorite idiom as a third example. Write a sentence cross referencing the example you wrote indicating why it is your favorite idiom. 
 
+```{=tex}
+\begin{exe} % sets up the top-level example environment (2) 
+	\ex\label{yet-another-label}
+
+	\begin{xlist} % subenvironment (2.a)
+
+		\ex\label{yet-another-label-a}
+		\gll sacar la pata del barro \\
+		{take out} the leg {from the} mud \\
+		\trans lit: 'take out the leg from the mud. idm: help somebody 
+
+		\ex\label{yet-another-label-b} % subenvironment (2.b)
+		\gll sacar las castañas del fuego \\
+		{take out} the chestnuts {from the} fire\\
+		\trans lit: pull the chestnust from the fire. idm: help somebody
+
+		\ex\label{yet-another-label-c} % subenvironment (2.c)
+		\gll estirar la pata \\
+		stretch the leg\\
+		\trans lit: stretch the leg. idm: die
+
+	\end{xlist} % end first embedding
+
+\end{exe}
+```
 
 
-My favorite idiom is (\ref{another-label2-c}) because because it is known everywhere in the Spanish-speaking world!
+My favorite idiom is (\ref{yet-another-label-c}) because because it is known everywhere in the Spanish-speaking world!
 
 ## Trees
 
@@ -374,7 +450,7 @@ Here's a simple trick I use to help me build them as quickly as possible.
     [Spec][X' 
           [X][YP]]]
 
-```{r, eval = FALSE}
+```{=tex}
 \begin{exe}
 \ex\label{tree-01}
   \hfil
@@ -395,7 +471,7 @@ You can, for instance, show movement with arrows. That would require you to labe
     [X][YP, name=complement]]]
     \draw[->, dotted] (complement) to (spec);
     
-```{r, eval = FALSE}
+```{=tex}
 \begin{exe}
 \ex\label{tree-02}
   \hfil
@@ -426,7 +502,7 @@ Putting it all together, we need to tell the direction we want the arrow to exit
     \draw[->, dotted] (complement) to[out=south west, in=south] (spec);
 
 
-```{r, eval = FALSE}
+```{=tex}
 \begin{exe}
 \ex\label{tree-03}
   \hfil
@@ -462,4 +538,5 @@ Draw a simple syntactic tree where you use a solid arrow to represent a Spec-hea
 - I check this book all the time when I have RMarkdown questions: https://bookdown.org/yihui/rmarkdown/.
 - If I couldn't find the answers there, I usually go here: https://bookdown.org/yihui/rmarkdown-cookbook/
 
+\newpage
 # References
